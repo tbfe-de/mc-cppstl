@@ -1,0 +1,23 @@
+# -----------------------------------------------------------------------------
+# List All Infographics Used in this Training
+# -----------------------------------------------------------------------------
+# Note:
+# - Empty lines are ignored
+# - Comment as usual (start with # after first non-whitespace)
+# - Sections separated by colon-lines (currently no special meaning)
+# - Order mattters for generating combined PDF
+
+:::::::::::::::::::::::::::: Day 1, Part 1
+STL-SequenceContainers
+STL-AssociativeContainers
+AlgorithmicComplexity
+
+:::::::::::::::::::::::::::: Day 2, Part 1
+STL-ContainerIterators
+STL-IteratorDetails
+STL-IteratorCategories
+STL-IteratorUsages
+
+:::::::::::::::::::::::::::: Day 2, Optional Part
+ContainerImplementations
+SmartPointers
