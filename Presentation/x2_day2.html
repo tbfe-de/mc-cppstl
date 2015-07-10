@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>(X2) C++ Focus On STL – Day 2, Optional Part</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="CSS/styling.css" />
+    <!-- when changing the stylesheet, please also change EACH 'styling-by:' -->
+  </head>
+  <body>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- :::::::::: template pages come first ... skip to REALCONTENT ::::::::: -->
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<textarea id="source">
+
+layout: true
+name: blank
+styling: styling.css
+styling-by: Martin Weitzel
+
+<!--
+  *****************************************************************************
+  Template used for title page (only)
+  *****************************************************************************
+  Please change the 'styling-by:' attribute if you change the style-sheet.
+-->
+
+.stylehint[
+Styled with [{{styling}}]({{styling}}) by {{styling-by}}
+]
+
+---
+layout: true
+name: plain
+copyright: (CC) BY-SA
+branding:  [Dipl.-Ing. Martin Weitzel](http://tbfe.de)
+customer:  [im Auftrag von MicroConsult Training & Consulting GmbH](http://microconsult.de)
+
+<!--
+  *****************************************************************************
+  Template used for for pages NOT referring to any Info-Graphic
+  *****************************************************************************
+  The following attributes are mandatory FOR THE TEMPLATE PAGE and should
+  simply be left empty if not meaningful.
+
+  copyright: will be reproduced in each page footer first
+  branding: will reproduced in each page footer next
+  customer: will be reproduced in each page footer last
+
+  As the above attributes are part of several page templates a global replace
+  should be used for consistent changes.
+
+  On pages USING THIS TEMPLATE the following attributes must be set:
+
+  header: ## and header text (i.e. including the markdown formatting indicator)
+
+-->
+
+{{header}}
+
+.pagefooter[
+{{copyright}}: {{branding}} {{customer}} .microconsult-logo[]
+]
+
+---
+layout: true
+name: linkinfo
+copyright: (CC) BY-SA
+branding:  [Dipl.-Ing. Martin Weitzel](http://tbfe.de)
+customer:  [im Auftrag von MicroConsult Training & Consulting GmbH](http://microconsult.de)
+
+<!--
+  *****************************************************************************
+  Template used for for pages INTRODUCING to a new Info-Graphic
+  *****************************************************************************
+  On this kind of pages a size-reduced version of the whole info graphic will
+  be reproduced and occupies approximately 2/3 of the page width. So only add
+  little information, preferably links to later pages dealing with single
+  sections of the info graphic.
+
+  On pages USING THIS TEMPLATE the following attributes must be set:
+
+  graphic: file path to of the infographic EXCLUDING the suffix.
+  header: ## and header text (i.e. including the markdown formatting indicator)
+
+-->
+
+{{header}}
+
+.infographic[
+[![Info-Grafik](InfoGraphics/{{graphic}}.png)](InfoGraphics/{{graphic}}.png
+                "Click to open – add [CTRL+] SHIFT for new [tabbed] window")
+]
+
+.pagefooter[
+{{copyright}}: {{branding}} {{customer}} .microconsult-logo[]
+]
+
+---
+layout: true
+name: withinfo
+copyright: (CC) BY-SA
+branding:  [Dipl.-Ing. Martin Weitzel](http://tbfe.de)
+customer:  [im Auftrag von MicroConsult Training & Consulting GmbH](http://microconsult.de)
+
+<!--
+  *****************************************************************************
+  Template used for pages dealing with a SPECIFIC SECTION of an Info-Graphic
+  *****************************************************************************
+  On such pages a link to the info graphic is reproduced in the top-right
+  corner (or maybe elsewhere depending on the style sheet), so there are no
+  restrictions with respect to the space available for the content of the page.
+
+  On pages USING THIS TEMPLATE the following attributes must be set:
+
+  graphic: file path to of the info graphic EXCLUDING the suffix and
+  section: specific section in the info graphic this page refers to
+  header: ## and header text (i.e. including the markdown formatting indicator)
+-->
+
+{{header}}
+
+.infolink.right[
+[Click here for Info-Graphic  
+{{graphic}}](InfoGraphics/{{graphic}}.png "add [CTRL+] SHIFT for own [tabbed] window")  
+{{section}}
+]
+
+.pagefooter[
+{{copyright}}: {{branding}} {{customer}} .microconsult-logo[]
+]
+
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- end of templates ... below comes the REALCONTENT - TNETNOCLAER ends it -->
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+---
+layout: false
+template: blank
+
+  [C++ STL]: 00_topics.html#agenda
+
+# [C++ STL] – Odds and Ends
+.center[(Day 2, Optional)]
+
+-------------------------------------------------------------------------------
+
+* [Extensions Provided by Boost		](#stl_boost_extensions)
+* [STL-Concurrency Support		](#stl_concurrency_support))
+* [STL-Quirks and Shortcomings		](#stl_quirks_and_shortcomings)
+* [Micro-Project Suggestions		](#micro_project_suggestions)
+
+-------------------------------------------------------------------------------
+
+---
+template: plain
+name: stl_boost_extensions
+header: ## Extensions Provided by Boost
+
+[Boost Platform]: http://www.boost.org
+
+From the libraries available on the [Boost Platform], probably the following are
+the most interesting to augment what is provided in the STL:
+
+* With respect to (additional) containers:
+
+  * [Boost.Bimap	](#boost_bimap)
+  * [Boost.MultiIndex	](#boost_multi_index)
+  * [Boost.PropertyTree	](#boost_property_tree)
+
+* With respect to (additional) algorithms:
+
+  * [Boost.Algorithm	](#boost_algorithm)
+
+* With respect to implementing Iterators:
+
+  * [Boost.Iterator	](#boost_iterator)
+
+* As an alternative to the STL iterator interface for algorithms:
+
+  * [Boost.Range	](#boost_range)
+
+---
+template: plain
+name: boost_bimap
+header: ### Boost.Bimap
+
+[Boost.Bimap]: http://www.boost.org/doc/libs/release/libs/bimap/doc/html/index.html
+[Boost Platform]: http://www.boost.org
+
+[Boost.Bimap] semantically._[] combines two maps so that
+
+* efficient Bidirectional Lookup is provided, or
+* as a concrete example
+  * look-up IP-Numbers for Host-Names, and
+  * llok-up Host-Names for IP-Numbers.
+
+<!--
+.I[
+For more information on bidirectional maps see:
+http://www.boost.org/doc/libs/release/libs/bimap/doc/html/index.html
+]
+-->
+
+.F[:
+The technique used to implement that kind of bidirectional lookup has not been
+researched for the purpose of that presentation. But it can be assumed – as for
+most libraries available on the [Boost Platform] – that is at least as
+performant as an equivalent "home-grown" solution based on STL components.
+]
+
+---
+template: plain
+name: boost_multi_index
+header: ### Boost.MultiIndex
+
+[Boost.MultiIndex]: http://www.boost.org/doc/libs/release/libs/multi_index/doc/index.html
+[DSL]: https://en.wikipedia.org/wiki/Domain-specific_language
+
+[Boost.MultiIndex] is the "in memory" equivalent for data base table, i.e.
+
+* by means of very advanced template programming a versatile parametrized class
+  is provided
+* extending the principles of a map to multiple columns,
+  * each of which may be
+    * indexable (or not)
+    * unique (or not)
+  * …
+
+Note that the complexity of advanced template programming is mostly on the
+implementors side.
+
+.N[
+From the client's perspective it rather appears as [DSL] that can be used in a
+"Cook-Book" style, following and extending the examples from the documentation.
+]
+
+<!--
+.I[
+For more information on multi-index tables see:
+http://www.boost.org/doc/libs/release/libs/multi_index/doc/index.html
+]
+-->
+
+---
+template: plain
+name: boost_property_tree
+header: ### Boost.PropertyTree
+
+[Boost.PropertyTree]: http://www.boost.org/doc/libs/release/doc/html/property_tree.html
+[GoF-Composite]: https://en.wikipedia.org/wiki/Composite_pattern
+
+[Boost.PropertyTree] provides a data structure close to the [GoF-Composite]
+design pattern.
+
+It allows for
+
+* hierarchical nesting (in principally unlimited depths)
+  * of pairs of
+    * keys and
+    * values,
+  * with the latter introducing recursion by
+    * supporting property (sub-) tree
+    * besides atomic elements.
+
+.N[
+Property trees (from Boost) are especially if it is necessary to make the
+contained information persistent.
+]
+
+<!--
+.I[
+For more information on property trees see:
+http://www.boost.org/doc/libs/release/doc/html/property_tree.html
+]
+-->
+
+---
+template: plain
+name: boost_property_tree
+header: #### Property Tree Serialisation Formats
+
+[XML]: http://www.xml.com/pub/a/98/10/guide0.html?page=2#AEN58
+[JSON]: http://json.org/
+[JavaScript]: https://simple.wikipedia.org/wiki/JavaScript
+[INFO File]: http://www.boost.org/doc/libs/release/doc/html/property_tree/parsers.html#property_tree.parsers.info_parser
+[INI-Files]: https://en.wikipedia.org/wiki/INI_file
+
+There are several serialisation formats to chose from when a property tree is
+stored to a file or read-back:
+
+* [XML]  
+  with pre-defined tags (**not** any generic XML structure);
+
+* [JSON]  
+  a hierarchical data format (made popular by [JavaScript]) for simple
+  data exchange in web applications and elsewhere;
+
+* [INFO File]  
+  a hierarchical format (much similar to the former), which was specially
+  designed for storing a property tree in a text file;
+
+* [INI-Files]  
+  as in early versions of  MS-Windows.._[]
+
+.F[:
+When storing to and reading from ini-files there are limitations to the property
+tree content, especially ini-files were not designed to hold (and easily edit)
+nested data structures.
+]
+
+---
+template: plain
+name: boost_algorithm
+header: ### Boost.Algorithm
+
+[Boost.Algorithm]: http://www.boost.org/doc/libs/release/libs/algorithm/doc/html/index.html
+
+[Boost.Algorithm] extends the
+[Algorithm Dimension](04_day2.html#stl_algorithm_extensions) of the STL.
+
+E.g. there are algorithms applicable to containers
+
+* for efficiently sub-sequences
+* applying comparisons
+* … (and more) …
+
+Since 2011 with each of the released ISO standards._[] parts of this library
+were included.
+
+.N[
+Therefore [Boost.Algorithm] also provides a way to get (some) C++11/C++14
+compatibility even if not provided by the compiler vendor.
+]
+
+.F[:
+I.e. at the time of writing this, with C++11/14.
+]
+
+<!--
+.I[
+For more information on extended algorithms see:
+http://www.boost.org/doc/libs/release/libs/algorithm/doc/html/index.html
+]
+-->
+
+---
+template: plain
+name: boost_iterator
+header: ### Boost.Iterator
+
+[Boost.Iterator]: http://www.boost.org/doc/libs/release/libs/iterator/doc/index.html
+
+[Boost.Iterator] is two things:
+
+1. It is a clean-up (beyond a pure re-wording) for the
+   [Iterator Categories](04_day2.html/#iterator_categories) as originally
+   specified with C++98.
+
+2. It helps to avoid much systematic code when implementing new iterators.
+
+<!--
+.I[
+For more information on extensions to iterators see:
+http://www.boost.org/doc/libs/release/libs/iterator/doc/index.html
+-->
+
+---
+template: plain
+name: boost_range
+header: ### Boost.Range
+
+[Boost.Range]: http://www.boost.org/doc/libs/release/libs/range/doc/html/index.html
+[U*ix Pipeline]: https://en.wikipedia.org/wiki/Pipeline_%28Unix%29
+
+[Boost.Range] implements all STL algorithms with a different interface:
+
+* Instead of supplying two iterators to specify a range by the element it starts
+  with and the first element beyond its end,
+
+* **a single argument** has to be specified
+  * which is a **model of some a range concept**, and
+  * can be created in various ways.
+
+Of course, creating a range from two iterators is still possible – but it is not
+any more the **only** way, as it is with the classic STL API.
+
+.N[
+Even more flexibility is achieved with respect to ranges by utility operations,
+e.g. to directly feed the output from one algorithm as input to another one.._[]
+]
+
+.F[:
+As for this operation also an overload is defined for `operator|`, those who are
+accustomed to [U*ix Pipeline]s._[] might be appealed also by the nifty look!
+]
+
+---
+template: plain
+name: stl_concurrency_support
+header: ## STL Concurrency Support
+
+[Concurrency Support]: http://en.cppreference.com/w/cpp/thread
+
+Though C++11 introduced substantial [Concurrency Support] in the language and
+library 
+
+* the STL **does not provide a direct interface** to distribute work among
+  several threads, as a means to improve performance on multi-core CPUs, instead
+
+* the STL specification gives leeway to exploit chances for parallelizing
+  independent parts of the work,
+
+as long as it stays within the limits of the specified algorithmic complexity.
+
+.W[
+The problem is not that STL algorithms cannot be parallelized – it is rather
+that developers might not be aware that it does.
+]
+
+---
+template: plain
+name: parallelizing_transparently
+header: ### Parallelizing Transparently
+
+E.g. it is **unspecified** by the ISO standard
+
+* in which order `std::count_if` accesses the sequence to process
+* which algorithm is used by `std::sort`
+
+Therefore a conforming implementation could well be split the work over a number
+threads, given its complexity is O(N) or O(N×log<sub>2</sub>(N) respectively.
+
+.N[
+If not explicitly specified for an algorithm, **no particular order** should be
+assumed in which the elements on a container are accessed.
+]
+
+As this may not have been the case in the past,._[]
+
+* the problem might occur without warning,
+* when old code is compiled with a new library version,
+* that implements parallelized algorithms without giving notice.
+
+.F[:
+The author confesses guilty for having used at least one example to demonstrate
+the use of STL algorithms, that had a stateful functor, hence depending on
+linear sequential access of container elements, front to back, but the algorithm
+used in the example didn't guarantee this!
+]
+
+---
+template: plain
+name: parallelizing_explicitly
+header: ### Parallelization Explicitly
+
+If a given library implementation does not exploit chances for parallelizing,
+it may be done explicitly.
+
+Given there are four CPU cores, sorting a large._[] array might be done by
+
+* **first** sorting four independent, equally sized segments in four threads –
+  using `std::sort` and a bit of arithmetic with respect to the borders,
+
+* **then** merging the two bottom and the two top segments in two threads –
+  using `std::inplace_merge` (and some recycled border calculation from
+  the first step), and
+
+* **finally** merging the two sorted sections resulting from the previous step –
+  again using `std::inplace_merge` on the whole array.
+
+.W[
+Though the above sounds simple – and in fact is not that hard to achieve with
+what is already provided by the STL – understand that any added complexity tends
+to make a program harder to understand and more difficult to maintain.
+]
+
+---
+template: plain
+name: parallelizing_efficient
+header: ### Improving Performance - A Word to the Wise
+
+Before applying a performance improvement, be sure to understand the following:
+
+* If some part of a complex task contributes 20% to its total runtime,._[]
+  * a performance improvement of 30% wins 6% total,
+  * a performance improvement of 50% wins 10% total, and
+  * **no** performance improvement will ever win more than 20%.
+* Other if some part of a complex task contributes 90% to its total runtime,
+  * then … (you will surely be able to do the math yourself).
+
+.N[
+The total effect of performance improvements are often hard to predict.
+]
+
+Therefore:
+
+* **Measure before you start** …  
+
+… and be sure to measure correctly and check the results for plausibility!
+
+.F[:
+This may or may not be much: if applied to a large application, **most** of
+its whole source code may not have that impact. When considering an algorithm
+in isolation it may not be much if it is the core of the algorithm, not some
+preparation, book-keeping, or handling of exceptional conditions.
+]
+
+---
+template: plain
+name: parallelizing_efficient
+header: ### Scaling for Multiple Cores
+
+[Packaged Task]: http://de.cppreference.com/w/cpp/thread/async
+
+The following is well-known – and can be demonstrated by measurements:
+
+.N[
+To increase performance it is contra-productive to split a CPU-bound task to
+more threads as there are physical cores.._[]
+]
+
+When parallelizing with [Packed Tasks] in many cases
+
+* the decision in many cases is best left to the library (implementation),
+* assuming it has platform or operating system specific means to adapt actual
+  (hardware) concurrency in the optimal way.
+
+.W[
+**Explicitly exempt** from that advice are more or less sophisticated
+networks of **tasks that run independently** from each other,
+**communicating via buffered pipelines**.
+]
+
+**Such designs easily deadlock if the library is allowed to silently turn
+asynchronous into synchronous calls.**
+
+.F[:
+Or at least to more threads as there independent partial hardware processing
+units that can work physically concurrent, like there are in hyper-threading
+architectures.
+]
+
+---
+template: plain
+name: stl_quirks_and_shortcomings
+header: ## STL-Quirks and Shortcomings
+
+[Scott Meyers]: http://www.aristeia.com/
+
+Though the STL has been designed by only two original contributors and
+therefore has a quite uniform look&feel, there is some "historic ballast"
+that is difficult to get rid of.
+
+The areas considered on the following pages are:
+
+* A few case [Inconsistent naming](#stl_naming_inconsistencies).
+
+* Some non-obvious [Peculiarities of "Big-O"](#stl_big_o_peculiarities)
+  complexity specifications.
+
+Both are considered more closely on the next two pages.._[]
+
+.F[:
+To give credit where credit is due: this whole section was inspired by some
+sequences from the following [Scott Meyers] video, starting at
+[minute 37:54](https://www.youtube.com/watch?feature=player_detailpage&v=5tg1ONG18H8#t=2274):
+https://www.youtube.com/watch?v=5tg1ONG18H8
+]
+
+---
+template: plain
+name: stl_naming_inconsistencies
+header: ### STL Naming Inconsistencies
+
+[Stable Sort]: https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
+
+Purging an element with a given value
+
+* from an `std::list` and an `std:forward_list` is done with the member function
+  `remove`, while
+* from any associative container it is done with with the member function `erase`.
+
+Sorting elements
+
+* of an `std::list` or an `std::forward_list` needs to be done with the member
+  function `sort`
+  * which guarantees a [Stable Sort], while
+* for any other sequential container it is done with the (non-member) algorithm
+  `std::sort`,
+  * which **is not guaranteed to be a stable sort**, and
+  * as if this is desired `std::stable_sort` has to be used.
+
+(More cases as those discussed above may exist.)
+
+---
+template: plain
+name: stl_big_o_peculiarities
+header: ### STL Non-Obvious "Big-O" Complexity
+
+Usually operations are not implemented if this were only possible with a
+substantial performance penalty.
+
+* Therefore `std::vector` has no member function `push_font` as `std::deque` and
+  `std::list` have …
+  * … but you can still use the `insert` member function anywhere, though
+   O(N<sup>2</sup>) performance.
+
+* Nonetheless `std::binary_search` is applicable to linear lists and specified
+  to have "good" O(log<sub>2</sub>(N)) performance …
+  * … though in this case you would naively expect much worse O(N).
+
+* Adding elements to an `std::vector` at its end is specified to run in
+  amortized constant time,
+  * even though the available space must be eventually enlarged,
+  * an operation more and more expensive, each time it happens.
+
+(More cases as those discussed above may exist.)
+
+---
+template: plain
+name: micro_project_suggestions
+header: ## Micro-Project Suggestions
+
+Following are some suggestions for micro-projects involving the STL.
+
+.pull-left[
+
+For all projects there is some
+
+* [Basic C++ Knowledge](#micro_projects_base_knowledge)
+
+expected, given you may select from the following categories:
+
+* [Container Centric](#stl_container_micro_projects)
+* [Algorithm Centric](#stl_algorithm_micro_projects)
+* [Extension Centric](#stl_extension_micro_projects)
+* [Miscellaneous Others](#stl_miscellaneous_micro_projects)
+
+]
+
+.pull-right[
+Besides focussing on a specific area the suggested micro-projects have a
+difficulty specified for each project …
+  
+<!-- -->
+
+| … on a scale&nbsp;|&nbsp;of four |
+|------------------:|:-------------|
+| *trivial:*        | 😉 😉 😉 😉      |
+| *simple:*         | 😡 😉 😉 😉      |
+| *advanced:*       | 😞 😡 😐 😉      |
+| *challenging:*    | 😞 😱 😐 😎      |
+
+]
+
+If you find nothing among the micro projects which is of interest to you, feel
+free to start your own.
+
+.N[
+You will receive any help to the best of the trainer's ability, but don't expect
+a perfect sample solution at the end.
+]
+
+---
+template: plain
+name: micro_projects_base_knowledge
+header: ### General Basic C++ Knowledge
+
+Besides the knowledge areas listed in the *Requirements* section of each project,
+you should be fluent in the following areas of C++:
+
+General C++ syntax and concepts, as
+
+* variable definition and scope,
+* flow control mechanisms including the basics of exceptions,
+* the basics of classes as extensions to data structures
+* the (very) basics of inheritance and other OOP core features
+* the instantiation syntax of templates._[]
+* reading input from `std::cin` and writing output to `std::cout`.
+
+Furthermore it *might* pay to develop a certain scheme of
+
+* [Automated Testing](#automated_testing)
+
+so that you do not need to run your program over and over again,
+"manually typing some "test input" and "visually checking the output"
+for the correct response.
+
+.F[:
+**Not:** How to define templated containers and algorithm though you will
+probably gain some insight by working on the projects.
+]
+
+---
+template: plain
+name: automated_testing
+header: ### Automated Testing
+
+[TDD]: https://en.wikipedia.org/wiki/Test-driven_development
+[Boost.Test]: http://www.boost.org/doc/libs/release/libs/test/doc/html/index.html
+[Google Test]: http://code.google.com/p/googletest
+[CppUnit]: http://cpunit.sourceforge.net/
+[Cute]: http://www.ifs.hsr.ch/Cute.5820.0.html
+[Qt's QTestLib]: http://doc.qt.io/qt-4.8/qtestlib-manual.html
+
+There are many options to automate testing and as many frameworks that support
+the [TDD] approach.
+
+To name just a few (sorted in alphabetically, not by personal preference):
+
+--------------------------------------------------------------------------------
+.pull-left[
+
+* [Boost.Test]
+* [CppUnit]
+* [Cute]
+
+]
+.pull-right[
+
+* [Google Test]
+* [Qt's QTestLib]
+* …
+
+]
+
+<!-- -->
+
+--------------------------------------------------------------------------------
+
+If you are comfortable with one of the above **just use it** and test your
+micro-project solution until you get "the green bar".
+
+--------------------------------------------------------------------------------
+
+For all others the following pages outline two "poor man's" approaches:._[]
+
+* [Base your Testing on `assert`](#assert_based_testing)
+* [Simplistic Homegrown TDD](#simplistic_home_grown_tdd)
+
+.F[:
+Proposing these alternatives has the only reason that using any of the TDD
+frameworks from would introduce a dependency that can be avoided with by using
+a few very basic "C++-Bordmittel".
+]
+
+---
+template: plain
+name: assert_based_testing
+header: ####  Assertion Based Testing (1)
+
+Assertion bases testing is based on … `assert`-ions.
+
+The following demonstrates the approach with a test of the faculty function:._[]
+```
+#include <cassert> // necessary to access the 'assert'-macro
+                   // (as a macro, there is no std::-prefix)
+
+unsigned long long faculty(unsigned long long n) {
+    return n ? n*faculty(n-1) : 1;
+}
+
+int main() {
+    assert(faculty(5) == 120); // 1*2*3*4*5 => 120
+
+    assert(faculty(2) == 2);   // 1*2 => 2
+    assert(faculty(1) == 1);   // 1 => 1 (border case)
+    assert(faculty(0) == 1);   // => 1 (mathematically correct!)
+}
+```
+
+.F[:
+In an attempt to stay with most simple of all thinkable solutions, the scheme as
+outlined aboves applies the *"no news is good news"* principle, i.e. if you run
+the program and **nothing at all** happens, everything works as expected.
+]
+
+---
+template: plain
+name: assert_based_testing_2
+header: ####  Assertion Based Testing (2)
+
+[String Streams]: http://de.cppreference.com/w/cpp/io/basic_stringstream
+
+Making a program "trivially interesting" often involves some input and output.
+The following applies `assert-based` testing via [String Streams].
+
+First the candidate under test:
+```
+#include <iostream>
+#include <string>
+
+void say_hello(std::istream &in, std::ostream &out) {
+    std::string name;
+    while (in >> name)
+        out << "hello, " << name << '\n';
+}
+```
+
+Note that the above is not written as `main` program but just as a function.
+
+If course, it could therefore be called that way and tried with manual input and
+visually checking the response:
+```
+int main() {
+    say_hello(std::cin, std::cout);
+}
+```
+
+---
+template: plain
+name: assert_based_testing_3
+header: ####  Assertion Based Testing (3)
+
+Of course, what was originally intended was an automated test, possibly supplying
+different input and comparing the output to an expectation:
+```
+#include <sstream>
+
+int main() {
+    {// ---------------------- test with just one name
+        std::istringstream iss("world");
+        std::ostringstream oss;
+        say_hello(iss, oss);
+        assert(oss.str() == "hello, world\n");
+    }
+    {// ---------------------- test border case (empty input)
+        std::istringstream iss("world");
+        std::ostringstream oss;
+        say_hello(iss, oss);
+        assert(oss.str() == ""); // <-- expect not even a newline
+    }
+    std::cout << "*** ALL TESTS PASSED\n"; // not any longer:
+                                           // no news is good news
+}
+```
+
+.F[:
+Note the use of inner blocks to ease adding another test with a simple
+Copy&Paste.
+]
+
+---
+template: plain
+name: simplistic_home_grown_tdd
+header: ####  Simplistic Home-Grown TDD
+
+This approach is a slight extension of the following macro, which turns out to
+be extremely versatile in small demo programs:
+```
+#include <iostream>
+#define P(what)\
+    std::cout << "[" << __LINE__ << "] " #what " --> "\
+              << (what) << std::endl
+```
+
+The intended use is to print expressions in a "self-documenting" way:
+.pull-left[
+```
+#include <algorithm>
+
+int main() {
+    auto s = {3, 5, -4, 1, 12};
+    auto r = std::minmax(s);
+    P(s.first);
+    P(s.last);
+}
+```
+]
+.pull-right[
+The output produced when both fragments._[] are compiled together and run will
+look as follows:._[]
+```
+[10] r.first ==> -4
+[11] r.second ==> 12
+```
+(Assuming `P` was used in lines 10 and 11 of the source shown left.)
+]
+
+.F[:
+Of course the macro definition may go into a header is included in every source
+using `P`.
+]
+
+---
+template: plain
+name: simplistic_home_grown_tdd_2
+header: ####  Simplistic Home-Grown TDD (2)
+
+The obvious advantage over [Assertion Based Testing](#assert_based_testing) is:
+
+* The values are included in the output.
+
+The (also obvious) disadvantage is:
+
+* There is no indication whether the output is what was expected.
+
+The latter can be cured by adding another macro taking the expected value as
+second argument and showing a different mark (`!=!` instead of `-->`) when the
+actual value differs from the expected …
+```
+#define XP(what, expected)\
+    std::cout << "[" << __LINE__ << "] " #what\
+              << ((what) == expected ? " ==> " : " !=! ")\
+              << (what) << std::endl
+```
+
+… with the drawback that now only the expected value is shown …._[]
+
+.F[:
+… though to print the actual value you only need to change back to the `P`-macro
+… and purge the second argument for the moment … or introduce a pro-forma second
+argument to `X` too which gets ignored … and of course now any self-proclaimed C
+language expert world-wide will happily point out that a macro argument should
+**never ever* be used twice … so its time to turn the page once more …
+]
+
+---
+template: plain
+name: simplistic_home_grown_tdd_3
+header: ####  (Not any more so) Simplistic Home-Grown TDD (3)
+
+… and therefore this is what finally connects all the untangled ends:._[]
+```
+#define XP(what, expected)\
+    do {\
+        const auto &w = what;\
+        const auto &e = expected;\
+        std::cout << "[" << __LINE__ << "] " #what " --> " << w;\
+        if (w != e)\ 
+            std::cout << " !=! " <<  e << " <-- (expected)";\
+        std::cout << std::endl;\
+    } while (0)
+
+```
+
+.F[:
+It should be clear that we are quickly approaching the point at which it will
+probably pay to give up the home-grown approach and switch to a full-blown
+TDD framework.
+]
+
+---
+template: plain
+name: simplistic_home_grown_tdd_4
+header: ####  (Not any more so) Simplistic Home-Grown TDD (4)
+
+For the sake of completeness here is another test program …
+```
+#include <algorithm>
+#include <sstream>
+#include <iterator>
+
+int main() {
+    const int x[] = { 1, 5, 5, 8, 1, 12, 1, 5 };
+    std::ostringstream oss;
+    // do not copy any duplicates from the above sequence
+    std::unique_copy(std::begin(x), std::end(x),
+                     std::ostream_iterator<int>(oss, " "));
+    XP(oss.str(), "1 5 8 12 ");
+}
+```
+
+… and the message showing how `std::unique_copy` failed:._[]
+```
+[21] oss.str() --> 1 5 8 1 12 1 5  !=! 1 5 8 12  <-- (expected)
+```
+
+.F[:
+Actually it is not so much `std::unique_copy` that failed – it exactly behaves
+as specified – but a wrong expectation on the tester's side: not *all*
+duplicates are skipped over, only *adjacent* duplicates.
+]
+
+---
+template: plain
+name: stl_container_micro_projects
+header: ### Container Centric STL Micro-Projects
+
+--------------------------------------------------------------------------------
+
+1. [Implement a *Word Frequency Analysis* with an `std::map`](#wordfreq_analysis_map)
+1. [Implement a *Word Frequency Analysis* with an `std::multiset`](#wordfreq_analysis_multiset)
+1. [Transform a Text (File) into a *Word Position Table*](#text_to_wordpos_table)
+1. [Transform *Word Position Table* back into a Text (File)](#wordpos_table_to_text)
+
+--------------------------------------------------------------------------------
+
+---
+template: plain
+name: wordfreq_analysis_map
+header: #### *Word Frequency Analysis* with `std::map`
+
+##### Difficulty
+
+.N.center[
+*trivial:* 😉 😉 😉 😉
+]
+
+##### Requirements
+
+Basic use of stream in
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: wordfreq_analysis_multiset
+header: #### *Word Frequency Analysis* with `std::multiset`
+
+##### Difficulty
+
+.N.center[
+*simple:* 😡 😉 😉 😉 
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: text_to_wordpos_table
+header: #### Text to *Word Position Table*
+
+##### Difficulty
+
+.N.center[
+*simple* to *advanced:* 😡 😉 😉 😉 / 😞 😡 😐 😉
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: wordpos_table_to_text
+header: #### *Word Position Table* to Text
+
+##### Difficulty
+
+.N.center[
+*simple* to *advanced:* 😡 😉 😉 😉 / 😞 😡 😐 😉
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: stl_algorithm_micro_projects
+header: ### Algorithm Centric STL Micro-Projects
+
+--------------------------------------------------------------------------------
+
+1. [Some "One-Liners" (or Two-Liners at most)](#some_one_or_two_liners)
+1. [Understand How `std::nextpermutation` Works](#understand_nextpermutation)
+1. [Permute of all Words in a Sentence](#permutate_words_in_sentence)
+1. [Implement a Basics `noduplicates` Algorithm](#basic_noduplicates_algorithm)
+1. [Improve the `noduplicates` Algorithm](#improved_noduplicates_algorithm)
+
+--------------------------------------------------------------------------------
+
+---
+template: plain
+name: some_one_or_two_liners
+header: #### Some "One-Liners" (or Two-Liners at most)
+
+##### Difficulty
+
+.N.center[
+*trivial* to *challenging:* 😉 😉 😉 😉 / 😞 😱 😐 😎
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+---
+template: plain
+name: understand_nextpermutation
+header: #### Understand `std::nextpermutation`
+
+##### Difficulty
+
+.N.center[
+*trivial:* 😉 😉 😉 😉
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+---
+template: plain
+name: permutate_words_in_sentence
+header: #### Permute Words in a Sentence
+
+##### Difficulty
+
+.N.center[
+*advanced*: 😞 😡 😐 😉
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+---
+template: plain
+name: basic_noduplicates_algorithm
+header: #### A Basic `noduplicates` Algorithm
+
+##### Difficulty
+
+.N.center[
+*simple:* 😡 😉 😉 😉 
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+---
+template: plain
+name: improved_noduplicates_algorithm
+header: #### An Improved `noduplicates` Algorithm
+
+##### Difficulty
+
+.N.center[
+*advanced* to *challenging:* 😞 😡 😐 😉 / 😞 😱 😐 😎
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+---
+template: plain
+name: stl_extension_micro_projects
+header: ### Extension Centric STL Micro-Projects
+
+
+--------------------------------------------------------------------------------
+
+1. [Implement a *Basic Sequential Map* Container](#simple_sequential_map)
+1. [Implement an *Advanced Sequential Map* Container](#advanced_sequential_map)
+1. [Implement a Polymorphic Container *with* Inheritance](#polymorphic_container1)
+1. [Implement a Polymorphic Container *without* Inheritance](#polymorphic_container2)
+1. [Implement an "Iterator-Conscious" Container ](#iterator_conscious_container)
+
+--------------------------------------------------------------------------------
+
+---
+template: plain
+name: simple_sequential_map
+header: #### A *Basic Sequential Map* Container
+
+
+##### Difficulty
+
+.N.center[
+*advanced:* 😞 😡 😐 😉
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: advanced_sequential_map
+header: #### An *Advanced Sequential Map* Container
+
+##### Difficulty
+
+.N.center[
+*challenging:* 😞 😱 😐 😎
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: polymorphic_container1
+header: #### A Polymorphic Container *with* Inheritance
+
+##### Difficulty
+
+.N.center[
+*advanced*: 😞 😡 😐 😉
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: polymorphic_container2
+header: #### A Polymorphic Container *without* Inheritance
+
+##### Difficulty
+
+.N.center[
+*challenging:* 😞 😱 😐 😎
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: advanced_sequential_map
+header: #### An *"Iterator Conscious"* Container
+
+##### Difficulty
+
+.N.center[
+*challenging:* 😞 😱 😐 😎
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: stl_miscellaneous_micro_projects
+header: ### Miscellaneous Other Micro-Projects
+
+--------------------------------------------------------------------------------
+
+1. [Timings of `std::array` Traversals](#std_array_traversal_timing)
+1. [Timings of Container Traversals](#stl_container_traversal_timing)
+1. [Timings of Unordered Associative Containers](#stl_unordered_assoc_timings)
+1. [Timings of Various Callback Mechanisms](#stl_various_callback_timings)
+1. [Practical Improvements to Time-Measurements](#improvements_to_get_timings)
+1. [Estimate SBO-Improvements to Memory-Footprint](#estimate_sbo_improvements)
+
+--------------------------------------------------------------------------------
+
+---
+template: plain
+name: std_array_traversal_timing
+header: #### Timings of `std::array` Traversals
+
+##### Difficulty
+
+.N.center[
+*trivial* to *simple:* 😉 😉 😉 😉 / 😡 😉 😉 😉
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: stl_container_traversal_timing
+header: #### Timings of Container Traversals
+
+##### Difficulty
+
+.N.center[
+*simple:* 😡 😉 😉 😉
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+---
+template: plain
+name: stl_unordered_assoc_timings
+header: #### Timings of Unordered Associative Containers
+
+##### Difficulty
+
+.N.center[
+*simple* to *advanced:* 😡 😉 😉 😉 / 😞 😡 😐 😉
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+---
+template: plain
+name: improvements_to_get_timings
+header: #### Practical Improvements to Time-Measurements
+
+##### Difficulty
+
+.N.center[
+*challenging:* 😞 😱 😐 😎
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+---
+template: plain
+name: estimate_sbo_improvements
+header: #### [SBO]-Improvements to Memory-Footprint
+
+[SBO]: https://akrzemi1.wordpress.com/2014/04/14/common-optimizations/#sbo
+
+##### Difficulty
+
+.N.center[
+*advanced:* 😞 😡 😐 😉
+]
+
+##### Requirements
+
+TBD
+
+#####  Steps To Solution
+
+TBD
+
+
+</textarea>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- ::::::::::::::::::::: )-: ereh TNETNOCLAER fo dne :::::::::::::::::::: -->
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <script src="remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({ highlightLanguage: 'cpp', highlightStyle: 'docco' });
+    </script>
+  </body>
+</html>
+
+

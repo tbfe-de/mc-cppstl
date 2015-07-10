@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>(4) C++ Focus On STL – Day 2, Part 2</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="CSS/styling.css" />
+    <!-- when changing the stylesheet, please also change EACH 'styling-by:' -->
+  </head>
+  <body>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- :::::::::: template pages come first ... skip to REALCONTENT ::::::::: -->
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<textarea id="source">
+
+layout: true
+name: blank
+styling: styling.css
+styling-by: Martin Weitzel
+
+<!--
+  *****************************************************************************
+  Template used for title page (only)
+  *****************************************************************************
+  Please change the 'styling-by:' attribute if you change the style-sheet.
+-->
+
+.stylehint[
+Styled with [{{styling}}]({{styling}}) by {{styling-by}}
+]
+
+---
+layout: true
+name: plain
+copyright: (CC) BY-SA
+branding:  [Dipl.-Ing. Martin Weitzel](http://tbfe.de)
+customer:  [im Auftrag von MicroConsult Training & Consulting GmbH](http://microconsult.de)
+
+<!--
+  *****************************************************************************
+  Template used for for pages NOT referring to any Info-Graphic
+  *****************************************************************************
+  The following attributes are mandatory FOR THE TEMPLATE PAGE and should
+  simply be left empty if not meaningful.
+
+  copyright: will be reproduced in each page footer first
+  branding: will reproduced in each page footer next
+  customer: will be reproduced in each page footer last
+
+  As the above attributes are part of several page templates a global replace
+  should be used for consistent changes.
+
+  On pages USING THIS TEMPLATE the following attributes must be set:
+
+  header: ## and header text (i.e. including the markdown formatting indicator)
+
+-->
+
+{{header}}
+
+.pagefooter[
+{{copyright}}: {{branding}} {{customer}} .microconsult-logo[]
+]
+
+---
+layout: true
+name: linkinfo
+copyright: (CC) BY-SA
+branding:  [Dipl.-Ing. Martin Weitzel](http://tbfe.de)
+customer:  [im Auftrag von MicroConsult Training & Consulting GmbH](http://microconsult.de)
+
+<!--
+  *****************************************************************************
+  Template used for for pages INTRODUCING to a new Info-Graphic
+  *****************************************************************************
+  On this kind of pages a size-reduced version of the whole info graphic will
+  be reproduced and occupies approximately 2/3 of the page width. So only add
+  little information, preferably links to later pages dealing with single
+  sections of the info graphic.
+
+  On pages USING THIS TEMPLATE the following attributes must be set:
+
+  graphic: file path to of the infographic EXCLUDING the suffix.
+  header: ## and header text (i.e. including the markdown formatting indicator)
+
+-->
+
+{{header}}
+
+.infographic[
+[![Info-Grafik](InfoGraphics/{{graphic}}.png)](InfoGraphics/{{graphic}}.png
+                "Click to open – add [CTRL+] SHIFT for new [tabbed] window")
+]
+
+.pagefooter[
+{{copyright}}: {{branding}} {{customer}} .microconsult-logo[]
+]
+
+---
+layout: true
+name: withinfo
+copyright: (CC) BY-SA
+branding:  [Dipl.-Ing. Martin Weitzel](http://tbfe.de)
+customer:  [im Auftrag von MicroConsult Training & Consulting GmbH](http://microconsult.de)
+
+<!--
+  *****************************************************************************
+  Template used for pages dealing with a SPECIFIC SECTION of an Info-Graphic
+  *****************************************************************************
+  On such pages a link to the info graphic is reproduced in the top-right
+  corner (or maybe elsewhere depending on the style sheet), so there are no
+  restrictions with respect to the space available for the content of the page.
+
+  On pages USING THIS TEMPLATE the following attributes must be set:
+
+  graphic: file path to of the info graphic EXCLUDING the suffix and
+  section: specific section in the info graphic this page refers to
+  header: ## and header text (i.e. including the markdown formatting indicator)
+-->
+
+{{header}}
+
+.infolink.right[
+[Click here for Info-Graphic  
+{{graphic}}](InfoGraphics/{{graphic}}.png "add [CTRL+] SHIFT for own [tabbed] window")  
+{{section}}
+]
+
+.pagefooter[
+{{copyright}}: {{branding}} {{customer}} .microconsult-logo[]
+]
+
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- end of templates ... below comes the REALCONTENT - TNETNOCLAER ends it -->
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+---
+layout: false
+template: blank
+
+  [C++ STL]: 00_topics.html#agenda
+
+# [C++ STL] – Providing Extensions
+.center[(Day 2, Part 2)]
+
+-------------------------------------------------------------------------------
+
+* [STL-Design — Recapitulation		](#stl_design_recapitulation)
+* [Extending the Container Dimension	](#stl_container_extensions)
+* [Extending the Algorithm Dimension	](#stl_algorithm_extensions)
+
+-------------------------------------------------------------------------------
+
+---
+template: linkinfo
+graphic: STL-IteratorUsages
+name: stl_design_recapitulation
+header: ## STL-Design — Recapitulation
+
+----------------------------------------------------------------------------
+
+Basically the STL is designed along two axes
+
+* [Containers](#stl_design_containers) and
+* [Algorithms](#stl_design_algorithms), with
+* [Iterators](#stl_design_iterators) providing the glue.
+
+----------------------------------------------------------------------------
+
+The latter fall into one of several
+[Iterator Categories](#iterator_categories), 
+
+* containers specify the
+  [Iterator Category Provided](#iterator_category_provided),
+* while algorithm specify the
+  [Iterator Category Required](#iterator_category_required).
+
+----------------------------------------------------------------------------
+
+---
+template: withinfo
+graphic: STL-IteratorUsages
+section: Container Dimension
+name: stl_design_containers
+header: ### Container Dimension
+
+[Boost.Bimap]: http://www.boost.org/doc/libs/release/libs/bimap/doc/html/index.html
+[Boost.MultiIndex]:http://www.boost.org/doc/libs/release/libs/multi_index/doc/index.html
+
+Besides the containers provided by the STL, there are already various
+extensions to the container axes:
+
+* Native (C-style) Arrays
+
+* `std::basic_string` with all its convenience aliases
+
+  * `std::string`
+  * `std::wstring`
+  * `std::u16string`
+  * `std::u32string`
+
+* `std::istream` and `std::ostream`
+
+  * via `istream_iterator`
+  * and `ostream_iterator`
+
+* Containers provided by Boost
+
+  * [Boost.Bimap]
+  * [Boost.MultiIndex]
+  * … (and more) …
+
+---
+template: withinfo
+graphic: STL-IteratorUsages
+section: Algorithm Dimension
+name: stl_design_algorithms
+header: ### Algorithm Dimension
+
+[STL Algorithm Library]: http://en.cppreference.com/w/cpp/algorithm
+[STL Numeric Library]: http://en.cppreference.com/w/cpp/numeric
+[`<algorithm>`]: http://en.cppreference.com/w/cpp/header/algorithm
+[`std:min`]: http://en.cppreference.com/w/cpp/algorithm/min
+[`std:max`]: http://en.cppreference.com/w/cpp/algorithm/max
+[`std:minmax`]: http://en.cppreference.com/w/cpp/algorithm/minmax
+[`<iterator>`]: http://en.cppreference.com/w/cpp/header/iterator
+[`std::advance`]: http://en.cppreference.com/w/cpp/iterator/advance
+[`std::distance`]: http://en.cppreference.com/w/cpp/iterator/distance
+[`std::next`]: http://en.cppreference.com/w/cpp/iterator/next
+[`std::prev`]: http://en.cppreference.com/w/cpp/iterator/prev
+
+[Boost.Algorithm]: http://www.boost.org/doc/libs/release/libs/algorithm/doc/html/index.html
+
+Most of the algorithms provided by the [STL Algorithm Library] and the
+[STL Numeric Library] deal with accessing or elements in a container or provide
+some information with respect to the content of a container.
+
+* Extensions to these have been provided by [Boost.Algorithm].._[]
+* Some of this was standardised with C++11.
+
+Algorithms in the C++ standard library **not using** iterators as generic
+interface to a container are:
+
+* `std::max`, `std::min`, `std::minmax` – defined in `<algorithm>`
+
+Algorithms operating **directly on iterators** are:
+
+* `std::advance`, `distance`, `std::next`, `std::prev` – defined in `<iterator>`
+
+.F[:
+Note that what is provided by [Boost.String_algo] are of course algorithms in
+the meaning of a (library) subroutine that carries out a certain operation,
+but these algorithms are **not decoupled via iterators** from the string
+representation (understood as "character container").
+]
+
+---
+template: withinfo
+graphic: STL-IteratorUsages
+section: Iterators as "Glue"
+name: stl_design_iterators
+header: ### Iterators as "Glue"
+
+[Alexander Stepanov]: https://en.wikipedia.org/wiki/Alexander_Stepanov
+[David Musser]: https://en.wikipedia.org/wiki/David_Musser
+[ISO]: http://www.iso.org
+[ANSI]: http://www.ansi.org
+
+.N[
+Decoupling algorithms from containers via iterators, abstracting the operations
+for
+
+* accessing a container element, and
+* advancing to another element
+
+is a key attribution [Alexander Stepanov] and [David Musser] made to the
+direction into which C++11 evolved since it was first standardised by
+[ISO] and [ANSI] as C++98.
+]
+
+Contemporary class libraries at that time rather
+
+* **used C++ templates** to generalise on the container element type, but
+* **not with algorithms** to decouple element access and repositioning inside
+  the container via iterators.
+
+---
+template: plain
+name: iterator_categories
+header: ### Iterator Categories
+
+Iterators are usually implemented as (container specific) classes, but there is
+one important thing to understand with respect understand about iterator
+categories:
+
+.N.center[
+Iterator Categories **do not form a classic class hierarchy** and have no
+inheritance relationship to each other.
+]
+
+This is true despite the fact that frequently the operations of one category
+are extended by another category.
+
+**Rather iterator categories should be understood as contracts.**._[]
+
+.I[
+For more information on categories and especially how some category relates
+to other categories see:
+http://en.cppreference.com/w/cpp/iterator
+]
+
+.F[:
+With respect to iterator categories also another terminology is common, which
+uses the key abstractions of *"concepts" and "models"*. That terminology is
+applicable on a broader base and uses the word *"model"* to describe a set of
+requirements, that need to be fulfilled by a class which is said to be
+*"a model of the concept"*.
+]
+
+---
+template: plain
+name: iterator_operations
+header: #### Iterator Operations
+
+[QoI-Issue]: http://en.wikipedia.org/wiki/Standard_Template_Library#Quality_of_implementation_of_C.2B.2B_compilers
+
+The obvious aspect from an iterator category is which operations are provided.
+
+.N[
+Any violation of that part of the contract causes a diagnostic at compile time
+and translation will usually fail.._[]
+]
+
+What is left as *Quality of Implementation Issue* (or [QoI-Issue]) is how the
+diagnostic points out what went wrong – which in principle is not an easy
+decision for the compiler as there are two parties involved:
+
+* The client code (using the STL) which probably did adhere to the contract
+  with respect to the required operations?
+
+* The STL code (which implements an algorithm) which might have used an
+  operation not part of the specified iterator category?
+
+Therefore typical diagnostics show a lot of context information (meant to be
+helpful to decide who is the culprit, but often rather distracting)
+
+.F[:
+Since C89 the ISO/ANSI are not explicit about the conditions for which an
+executable is the end result … for the simple reason that interpretative
+translation environments should not be out-ruled.
+]
+
+---
+template: plain
+name: iterator_operations
+header: #### Iterator Semantics
+
+[Undefined Behaviour]: http://en.cppreference.com/w/cpp/language/ub
+
+The more critical part compared to operations are certain semantics expected
+from an iterator category.
+
+.W[
+This type of violation may result in failure to work as expected, or even
+even be the cause for [Undefined Behaviour].
+]
+
+Examples for that sort of the obligations contracted via the iterator category
+are:
+
+* **Multi-Pass Capability:**  
+  It may or may not be acceptable to store the start-point iterator and use
+  it again, to pass over the same sequence a second time.
+
+* **Input and Output Sequences:**  
+  A conforming client is required to use access (`operator*()`) and advance
+  (`operator++())` alternately.
+  
+.N.center[
+The crucial part here is that with too little testing  
+any problems may go completely undetected.
+]
+
+---
+template: plain
+name: iterator_invalidation
+header: #### Iterator Invalidation
+
+[Undefined Behaviour]: http://en.cppreference.com/w/cpp/language/ub
+[Iterator Invalidation]: http://en.cppreference.com/w/cpp/container#Iterator_invalidation
+
+It should also be noted that certain operations on an
+
+* `std::vector`
+
+may cause [Iterator Invalidation].._[]
+
+The same is true for
+
+* `std::basic_string`
+
+with all its usual type aliases, like `std::string`, `std::wstring` etc.
+
+.W[
+Any further use of the invalidated iterator(s) – except destruction –
+may cause [Undefined Behaviour].
+]
+
+.F[:
+It is probably self-evident that for also any iterator denoting a container
+element that gets removed from the container will be invalidated – or at least+
+will not point any longer to the element it once pointed to.
+]
+
+---
+template: plain
+name: iterator_category_provided
+header: ### Iterator Category Provided
+
+[BidirectionalIterator]: http://en.cppreference.com/w/cpp/concept/BidirectionalIterator
+[RandomAccessIterator]: http://en.cppreference.com/w/cpp/concept/RandomAccessIterator
+
+A container usually specifies which
+[Iterator Category](#iterator_categories)
+it **provides**.
+
+.N[
+This is not less and not more as a shorthand for the contract
+
+* the iterators of a given container are able to fulfill
+
+  * talking in terms of provided operations, and also
+
+* the usage restrictions they depend on.
+]
+
+From the STL standard containers
+
+* all provide the capabilities of the [BidirectionalIterator] category,
+* beyond that `std::array`, `std::deque`, and `std::vector` even provide the
+  capabilities of [RandomAccessIterator] category.
+
+---
+template: plain
+name: iterator_category_required
+header: ### Iterator Category Required
+
+An algorithm usually specifies which
+[Iterator Category](#iterator_categories)
+it **requires**.
+
+.N[
+This is not less and not more as a shorthand for the contract
+
+* the iterators as used in the algorithm needs to fulfil  
+
+  * talking in terms of provided operations, with violations usually
+    detectable at compile time, and also
+
+* what the algorithm promises to oblige to
+
+  * talking in terms of usage restrictions, typically not detectable at compile
+    time.
+]
+
+For the STL algorithms details vary between
+
+* iterators specifying an [input range](#iterator_category_for_input)
+* and those specifying an [output sink](#iterator_category_for_output).
+
+---
+template: plain
+name: iterator_category_for_input
+header: #### Iterator Category Required for Input
+
+[InputIterator]: http://en.cppreference.com/w/cpp/concept/InputIterator
+[ForwardIterator]: http://en.cppreference.com/w/cpp/concept/ForwardIterator
+[RandomAccessIterator]: http://en.cppreference.com/w/cpp/concept/RandomAccessIterator
+[`std::istream_iterator`]: http://en.cppreference.com/w/cpp/iterator/istream_iterator
+
+Most STL algorithms._[] access a container – as a sequence of values – by requiring
+two [InputIterator]s to specify the range to process.
+
+.N[
+Two things are to be noted here:
+
+1. [InputIterator]s do **not provide the multi-pass capability** (which is part
+   of [ForwardIterator]s).  
+   Hence most algorithms can directly process a stream input using an
+   [`std::istream_iterator`].
+
+2. The STL specification for some algorithms provides leeway to split the
+   work among several threads, so that the processed sequence **may or may not**
+   be sequentially accessed.
+]
+
+More technically: An implementation of an algorithm may apply techniques usually
+known as *Compile Time Meta Programming* to change its internals depending on
+the actual iterator category it receives.
+
+.F[:
+With the notable exception of `std::sort`, which requires
+[RandomAccessIterators], but **not** `std::binary_search`, which requires
+[ForwardIterator]s (besides a sorted range to search, of course).
+]
+
+---
+template: plain
+name: iterator_category_for_output
+header: #### Iterator Category Required for Output
+
+[OutputIterator]: http://en.cppreference.com/w/cpp/concept/OutputIterator
+[`std::ostream_iterator`]: http://en.cppreference.com/w/cpp/iterator/ostream_iterator
+
+STL algorithms with a specified output sink (typically the `_copy`-variant of
+some algorithm family) require [OutputIterator]s.
+
+.N[
+Hence these algorithms (also) can directly generate stream output using an
+[`std::ostream_iterator`].
+]
+
+If you implement algorithms with an output sink yourself, be sure to thoroughly
+test with different kind of iterators to write the sink.
+
+E.g. it is not unusual absolutely correct for a model of [OutputIteraror] to put
+all the work in `operator*()`, ignoring `operator++()` completely.._[]
+
+.W[
+Therefore any errors with respect to the correct alternating use of
+dereferencing and advancing may go undetected, when testing exclusively with
+these kind of iterator implementation, but will fail when used with a native
+pointers.
+]
+
+.F[:
+More precisely, `operator*()` fill return a special surrogate type for which
+`operator=()` is overloaded to do all the work.
+]
+
+---
+template: plain
+name: stl_container_extensions
+header: ## Extending the Container Dimension
+
+Extending the STL at the container dimension basically means that a new
+container class should offer an iterator interface.
+
+These are the basics (given the new container is named `MyContainer`
+templated in its element type symbolically denoted as `T`):
+
+* There should be a nested class named `MyContainer<T>::iterator`.
+*  It should provide (at least)._[]
+   * `T& operation*()`
+   * `MyContainer<T>::iterator operator++()`
+   * comparisons for equals and unequals
+* Furthermore the container itself should have member functions
+  `begin()` and `end()` returning `MyContainer<T>::iterator`.
+
+.F[:
+Of course much more is desirable, like `const_iterator` nested class, with
+matching `cbegin()` and `cend()` member functions, and more operations,
+depending on the [Iterator Category](#iterator_categories) that makes sense
+for the kind of container and is easily supported by its implementation.
+]
+
+---
+template: plain
+name: pragmatic_container_extensions
+header: ### Pragmatic Container Iterators
+
+The pragmatic way to provide iterators for a new container is as follows:
+
+* Just provide the minimum, and
+* depending on the use cases of the container iterators,
+* by and by add everything that is missing, as the need occurs.
+
+The following shown an absolute minimum bare-bones fragment that might
+can serve as a starting point:
+```
+template<typename T>
+class MyClass {
+    …
+public:
+    …
+    struct iterator {
+        … //
+        T& operator*() const { … }
+        iterator operator++() { … }
+    };
+    iterator begin() { … }
+    iterator end() { … }
+};
+```
+
+---
+template: plain
+name: compliant_container_extensions
+header: ### Fully Compliant Container Iterators
+
+[Boost.Iterator]: http://www.boost.org/doc/libs/release/libs/iterator/doc/index.html 
+
+Writing a "fully compliant"
+
+* `MyClass::iterator` (that e.g. supports pre- and post-increment),
+* a corresponding `MyClass::const_iterator`
+* with `cbegin()` and `cend()` member functions in `MyClass`,
+* maybe variants iterating in reverse too
+* … etc. etc. …
+
+quickly turns into writing much and partially very systematic, but nonetheless
+unavoidable code.._[]
+
+Especially there are some requirements in correctly "tagging" Iterators
+depending on their category, that must be followed.
+
+.I[
+For more information on the requirements of the various iterator categories
+start with reading section
+[Iterator Primitives](http://en.cppreference.com/w/cpp/iterator#Iterator_primitives)
+in:
+http://en.cppreference.com/w/cpp/iterator
+]
+
+.F[:
+[Boost.Iterator] provides some support with respect to the boiler-plate parts.
+]
+
+---
+template: plain
+name: stl_algorithm_extensions
+header: ## Extending the Algorithm Dimension
+
+[Compile Time Meta Programming]: http://accu.org/index.php/journals/424
+[`std::iterator_traits`]: http://en.cppreference.com/w/cpp/iterator/iterator_traits
+
+In comparison, extending the algorithm dimension is easier by far.
+
+.N[
+
+* Assume as little as possible about the container(s) your algorithm should
+  work on.
+
+* Consequently and consistently use iterators of an appropriate category to
+  access a container content.
+
+* May be get comfortable with
+
+  * the basic techniques of [Compile Time Meta Programming], or
+  * as the very least understand where [`std::iterator_traits`] comes in handy,
+    i.e. which kind of problems it will easily solve.
+
+]
+
+Furthermore, if there is the option,
+
+* instead of implementing new
+  [algorithms from ground-up](#new_algorithms_from_groundup),
+* prefer to add new [algorithms by reuse](#new_algorithms_by_reuse).
+
+---
+template: plain
+name: new_algorithms_from_groundup
+header: ### New Algorithms from Ground-Up
+
+As an example how to implement a (not yet existing) algorithm from ground-up,
+consider `std::copy_if`, which was missing from C++98 and has been added in
+C++11.
+
+Basically, implementing `copy_if` from ground-up could look as follows
+(in `namespace std`):
+```
+template<typename InIt, typename OutIt, typename Pred>
+OutIt copy_if(InIt from, InIt upto, OutIt dest, Pred tocopy) {
+    while (from != upto) {
+        const auto temp{*from++};
+        if (tocopy(temp))
+            *dest++ = temp;
+    }
+    return dest;
+}
+```
+
+For the local variable, prior to C++11 the following had to be used:
+```
+const typename std::iterator_traits<InIt>::value_type temp;
+```
+
+---
+template: plain
+name: new_algorithms_by_reuse
+header: ### New Algorithms by Reuse
+
+Adding `std::copy_if` is also possible by reusing the existing algorithm
+`std::remove_copy_if`.
+
+Then the implementation comes down to (again in `namespace std`):._[]
+```
+template<typename InIt, typename OutIt, typename Pred>
+OutIt copy_if(InIt from, InIt upto, OutIt dest, Pred tocopy) {
+    using VType = typename std::iterator_traits<InIt>::value_type;
+    return std::remove_copy_if(from, upto, dest,
+                               [&tocopy](const VType &e) {
+                                   return !tocopy(e);
+                               });
+}
+```
+
+With C++14 `VType` in the lambda argument list can be replaced with
+`auto` (and hence the whole type alias definition for `VType` be dropped).
+
+.F[:
+Some may prefer the function adapter `std::not` over the lambda, turning the
+body of the above into:
+```
+  return std::remove_copy_if(from, upto, dest, std::not1(tocopy));
+```
+]
+
+---
+template: plain
+header: ### Practically Extending the STL
+
+For a practical approach to extend the STL visit the
+[Micro Projects](x2_day2.html#stl_extension_micro_projects) focussing on
+extending the STL.
+
+.I[
+For more information on the STL Algorithm Library see:
+http://en.cppreference.com/w/cpp/algorithm
+]
+
+
+</textarea>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- ::::::::::::::::::::: )-: ereh TNETNOCLAER fo dne :::::::::::::::::::: -->
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+    <script src="remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({ highlightLanguage: 'cpp', highlightStyle: 'docco' });
+    </script>
+  </body>
+</html>
+
