@@ -996,14 +996,76 @@ header: #### *Word Frequency Analysis* with `std::map`
 *trivial:* 😉 😉 😉 😉
 ]
 
-##### Requirements
+##### Example
 
-Basic use of stream in
+.pull-left[
+From the following input …
+```
+beware the Jabberwock my son
+beware the Jubjub bird and shun
+the frumious Bandersnatch
+```
+]
+.pull-right[
+… produce that output:
+```
+Bandersnatch: 1
+Jabberwock: 1
+Jubjub: 1
+and: 1
+beware: 2
+bird: 1
+frumious: 1
+my: 1
+shun: 1
+son: 1
+the: 3
+```
+]
 
-#####  Steps To Solution
+---
+template: plain
+name: wordfreq_analysis_map-r
+header: ##### Requirements
 
-TBD
+Understand the concept of an STL map, used as:
+```
+std::map<std::string, int> word_freq;
+```
 
+Especially understand what the following expression returns, in both cases,
+for an existing and a non-existing key used in the square brackets:
+```
+… word_freq[w] … // assume w is of type std::string or compatible
+```
+
+---
+template: plain
+name: wordfreq_analysis_map_1
+header: ##### Steps to Solution
+
+1. Implement the input loop:
+   * extract words with `operator>>` from a stream into a string until EOF
+   * update the count per word
+
+2. Implement the output loop:
+   * traverse all entries of `word_freq`
+   * print the word and its frequency (one per line)
+
+---
+template: plain
+name: wordfreq_analysis_map_q
+header: ##### Questions
+
+In which order do you expect the words to be printed?
+
+How does this depend on the specify type of map used?
+
+##### Advanced Aspects
+
+How could the sort order of the words be changed?
+
+How could the words be reproduced in "insertion order" (of its first occurrence)?
 
 ---
 template: plain
@@ -1016,14 +1078,82 @@ header: #### *Word Frequency Analysis* with `std::multiset`
 *simple:* 😡 😉 😉 😉 
 ]
 
-##### Requirements
+##### Example
 
-TBD
+.pull-left[
+From the following input …
+```
+beware the Jabberwock my son
+beware the Jubjub bird and shun
+the frumious Bandersnatch
+```
+]
+.pull-right[
+… produce that output:
+```
+Bandersnatch: 1
+Jabberwock: 1
+Jubjub: 1
+and: 1
+beware: 2
+bird: 1
+frumious: 1
+my: 1
+shun: 1
+son: 1
+the: 3
+```
+]
 
-#####  Steps To Solution
+---
+template: plain
+name: wordfreq_analysis_multiset_r
+header: ##### Requirements
 
-TBD
+Understand the concept of an STL multiset, used as:
+```
+std::multiset<std::string, int> word_freq;
+```
 
+Understand (or look-up)
+
+* how the number of indices with the same value can be determined, and
+* how to skip over all but the first in a loop.
+
+---
+template: plain
+name: wordfreq_analysis_multiset_s
+header: #####  Steps To Solution
+
+1. Implement the input loop:
+   * extract words with `operator>>` from a stream into a string until EOF
+   * update the count per word
+
+2. Implement the output loop:
+   * traverse the entries of `word_freq`
+   * determine the frequency of a word (by the number of entries existing for
+     it)
+   * print the word and the number of occurrences (in a single line)
+   * skip over all the following entries for that word
+
+---
+template: plain
+name: wordfreq_analysis_multiset_q
+header: ##### Questions
+
+In which order do you expect the words to be printed?
+
+How does this depend on the specify type of map used?
+
+##### Advanced Aspects
+
+How could the sort order of the words be changed?
+
+If no particular sort order is required, were it possible to use an
+`std::unordered_multiset`?
+
+(Why? Isn't it that the order of traversal is arbitrary – so, if you tried, did
+it possibly work only by chance?)
 
 ---
 template: plain
@@ -1036,14 +1166,94 @@ header: #### Text to *Word Position Table*
 *simple* to *advanced:* 😡 😉 😉 😉 / 😞 😡 😐 😉
 ]
 
-##### Requirements
+##### Example
 
-TBD
+.pull-left[
+From the following input …
+```
+beware the Jabberwock my son
+beware the Jubjub bird and shun
+the frumious Bandersnatch
+```
+]
+.pull-right[
+… produce that output:
+```
+Bandersnatch: 4.2 
+Jabberwock: 2.2 
+Jubjub: 3.2 
+and: 3.4 
+beware: 2.0 3.0 
+bird: 3.3 
+frumious: 4.1 
+my: 2.3 
+shun: 3.5 
+son: 2.4 
+the: 2.1 3.1 4.0 
+```
+]
 
-#####  Steps To Solution
+---
+template: plain
+name: text_to_wordpos_table_r
+header: ##### Requirements
 
-TBD
+Understand that
 
+* input analysis **requires two nested loops**
+
+and how to
+
+* extract a full from a stream into an `std::string` using`std::getline`,
+* extract a world from stream into an `std::string` using `operator>>`,
+* turn an `std::string` into an `std::istringstream`.
+
+Also understand what in the following fragment is acceptable inside the square
+brackets and what is the (type of) the resulting expression.
+```
+struct line_pos {
+    int line, pos;
+    line_pos(int line_, int pos_) : line(line_), pos(pos_) {}
+};
+std::map<std::string, std::vector<line_pos>> word_tab;
+…            
+//              vvv------- what type can go here?
+    … word_freq[ … ] …     // and
+//    ^^^^^^^^^^^^^^------ what is the result of this?
+```
+
+---
+template: plain
+name: text_to_wordpos_table_s
+header: #####  Steps To Solution
+
+1. Implement the two nested input loop:
+   * the outer loop needs to read full lines until EOF
+     * while taking care of a line count (= total number of lines read so far)
+   * turn these line into an `std::stringstream` from which
+   * the inner loops extracts all contained words
+     * while taking care of the position count (= number of words read from
+       **this** line)
+
+2. Implement the two nested output loop:
+   * traverse the entries of `word_tab`
+     * print the word (element `first` of `std::pair<std::string, … >`)
+   * in a **nested** loop traverse the line and position numbers (element
+     `second` from `std::pair< … , std::vector<line_pos>>`)
+     * print all line and position numbers following the word they belong
+       to …
+     * … then add a line end (`\n` or `std::endl`)
+
+---
+template: plain
+name: text_to_wordpos_table_q
+header: #####  Questions
+
+Might it make sense to use `std::copy` as part of the solution?
+
+In the input loop?
+
+In the output loop?
 
 ---
 template: plain
@@ -1056,14 +1266,90 @@ header: #### *Word Position Table* to Text
 *simple* to *advanced:* 😡 😉 😉 😉 / 😞 😡 😐 😉
 ]
 
-##### Requirements
+##### Example
 
-TBD
+.pull-left[
+From the following input …
+```
+Bandersnatch: 4.2 
+Jabberwock: 2.2 
+Jubjub: 3.2 
+and: 3.4 
+beware: 2.0 3.0 
+bird: 3.3 
+frumious: 4.1 
+my: 2.3 
+shun: 3.5 
+son: 2.4 
+the: 2.1 3.1 4.0 
+```
+]
+.pull-right[
+… produce that output:
+```
+beware the Jabberwock my son
+beware the Jubjub bird and shun
+the frumious Bandersnatch
+```
+]
 
-#####  Steps To Solution
+---
+template: plain
+name: wordpos_table_to_text_r
+header: ##### Requirements
 
-TBD
+Some experience with parsing input (like shown), e.g. by
 
+* splitting an `std::string` at a given point,
+* **or** combining `std::istringstreams` with nested `std::getline` calls._[],
+  using separators different separators (`:` and `.`),
+* **or** using regular expressions.
+
+Understand that – in the general case – you need to have seen (and stored)
+**all input** before you can produce output, as the first word might come last.
+
+More depends on the solution, especially the data structure you chose to store
+the input until output is produced.
+
+The least amount of work will probably be necessary for this:
+```
+std::map<int, std::map<int, std::string>> word_tab;
+```
+
+.F[:
+And therefore understand that `std::getline` should rather have been named:
+`get_until_separator_and_swallow_the_latter`
+]
+
+---
+template: plain
+name: wordpos_table_to_text_s
+header: #####  Steps To Solution
+
+1. Implement reading input – **this is the more complicated part**
+   * details depend on the way you chose to parse the lines
+
+2. Implement generating output – this is the easy part
+   * with the storage structure proposed, this can be solved with two simple
+     (nested) range-`for` loops
+
+##### Questions
+
+How robust is your solution against "invalid input"?
+
+How could a minor addition and modification._[] to the storage structure avoid
+storing repeated words many times?._[]
+
+.F[:
+Some hints (if you need):  
+1. Think along the lines of "pointers" but chose something "more in the spirit
+of the STL".  
+2. Each word needs to be stored exactly once (well, about that is the whole
+idea of the improvement).  
+3. Look-up what is the return value when inserting an element into an associative
+container.  
+4. … no, NO, **NO!** – leave it, more hints would take out all of the fun :-)
+]
 
 ---
 template: plain
@@ -1072,18 +1358,18 @@ header: ### Algorithm Centric STL Micro-Projects
 
 --------------------------------------------------------------------------------
 
-1. [Some "One-Liners" (or Two-Liners at most)](#some_one_or_two_liners)
-1. [Understand How `std::nextpermutation` Works](#understand_nextpermutation)
-1. [Permute of all Words in a Sentence](#permutate_words_in_sentence)
-1. [Implement a Basics `noduplicates` Algorithm](#basic_noduplicates_algorithm)
-1. [Improve the `noduplicates` Algorithm](#improved_noduplicates_algorithm)
+1. [Small Challenges (and Performance Testing)	](#small_challenges)
+1. [Understand How `std::nextpermutation` Works	](#understand_nextpermutation)
+1. [Permute of all Words in a Sentence		](#permutate_words_in_sentence)
+1. [Implement a Basics `noduplicates` Algorithm	](#basic_noduplicates_algorithm)
+1. [Improve the `noduplicates` Algorithm	](#improved_noduplicates_algorithm)
 
 --------------------------------------------------------------------------------
 
 ---
 template: plain
-name: some_one_or_two_liners
-header: #### Some "One-Liners" (or Two-Liners at most)
+name: small_challenges
+header: #### Small Challenges (and Performance Testing)
 
 ##### Difficulty
 
@@ -1093,11 +1379,1041 @@ header: #### Some "One-Liners" (or Two-Liners at most)
 
 ##### Requirements
 
-TBD
+Online or offline reference for STL algorithms.
 
-#####  Steps To Solution
+(If considered necessary, hints are given with the individual steps.)
 
-TBD
+.N[
+Often the following challenges involve some practical performance testing.
+It might pay to have a cursory look on the page that explains the
+basics of [Getting Timings](#getting_timings) in an automatised way.
+]
+
+The solution itself._[] may often be "one-liner" so the "art" is rather to
+select the STL algorithm most appropriate to solve the task at hand.
+
+.F[:
+This does not include the frame to set up the test data. But that part may often
+be reused from a former challenge. Also understand that the goal is **not** to
+come up with a clever but overly cryptic "one-liner". If more lines of code –
+say a local temporary or type alias – will make the solution better
+comprehensible, then add it!
+]
+
+---
+template: plain
+name: one_and_two_liners_groups
+header: ##### Organisation into Groups
+
+As the following are rather "Nano-" or "Pico-Projects" they are organised
+slightly different as the other "Micro-Projects", and furthermore organised
+as sub-groups.
+
+--------------------------------------------------------------------------------
+
+* [Modifying Sequence Operations	](#modifying_sequence_ops)
+* [Non-Modifying Sequence Operations	](#nonmodifying_sequence_ops)
+* [Partitioning and Sorting Operations	](#partitioning_and_sorting_ops)
+* [Binary Search (on Sorted Ranges)	](#binary_search_ops)
+* [Set Operations (on Sorted Ranges)	](#alternative_set_ops)
+* [Heap Operations			](#alternative_heap_ops)
+* [Minimum/Maximum Operations		](#minmax_ops)
+* [Numeric Operations			](#numeric_ops)
+
+--------------------------------------------------------------------------------
+
+Modifying sequence operations are put first, as you will learn to create large
+data sets, useful for some performance measurements.
+
+After that goal is achieved, it is suggested **not** to work through all the
+groups linearly, but "move around a bit", within **and** between the groups.
+
+---
+template: plain
+name: modifying_sequence_ops
+header: ##### Modifying Sequence Operations
+
+[Algorithm Library]: http://en.cppreference.com/w/cpp/algorithm
+
+C++11 added the algorithm `std::copy_if`. But the fact that this was "missing"
+from C++98 was not that much a problem, as what it does can easily be done
+by `std::remove_copy_if` too.
+
+How?
+
+Demonstrate with an example program!
+
+Can you spot other "redundant functionality" in that sense, when skimming the
+content of the [Algorithm Library]?
+
+(The last question is posed not only with respect to the *modifying sequence
+operations*, as covered in this section, but all of the algorithm library.)
+
+---
+template: plain
+header: ##### Modifying Sequence Operations (cont.)
+
+Fill different kinds of containers of `int`-values using `std::iota`._[]
+
+Is the difference in speed for different container types measurable?
+
+* Which is the least size that shows a (substantial) difference?
+* Which container type performs best, which worst?
+* Given there are 5000 elements, what is the order of magnitude for
+  the difference between the best and the worst(1:2, 1:10, 1:100 …)?
+
+--------------------------------------------------------------------------------
+
+Name an algorithm that allows a more flexible way to generate the initial
+content of an STL container, so that the container may be filled with:
+
+* multiples of three
+* random numbers
+* primes
+
+Demonstrate at least one of the above with the chosen algorithm and get the
+timing.
+
+.F[:
+As `std::iota` became part of the library with C++11, it may not be available
+with some older library version. In this case: skip hat step or find some other
+algorithm set may be used.
+]
+
+---
+template: plain
+header: ##### Modifying Sequence Operations (cont.)
+
+Given a random number generator with an *iterator style interface*,._[] how
+could you use `std::copy_n` to fill a container with `N` random values?
+
+As `std::copy_n` wasn't part of C++11: what were the difficulty if the same had
+to be done with `std::copy`?
+
+Why does an iterator style interface
+
+* not fit to the requirements of `std::generate` / `std::generate_n`, and
+* how could you transform that interface "on the fly" with a Lambda?
+
+.F[:
+A very bare-bones implementation of such a `RandomIterator` class might look as
+follows (`std::rand` for simplicity and despite its well-known deficiencies):
+```
+   // random number generator with iterator-style interface
+#include <cstdlib>
+#include <iterator>
+
+struct RandomIterator
+        : std::iterator<std::input_iterator_tag, int> {
+    RandomIterator operator++() {
+        return *this;
+    }
+    int operator*() const {
+        return std::rand();
+    }
+};
+```
+]
+
+---
+template: plain
+header: ##### Modifying Sequence Operations (cont.)
+
+[`std::transform`]: http://en.cppreference.com/w/cpp/algorithm/transform
+[Random Number Generation]: http://en.cppreference.com/w/cpp/numeric/random
+
+From an `std::vector<unsigned int> x`, filled with ascending values from 0
+to 9999, generate a second `std::vector<float> y`, filled with the square
+roots of these numbers in `x`.._[]
+
+Do the same for a vector filled with random positive numbers.
+
+.W[
+You may use this for generating large sequences of floats as test data,
+but be sure to understand that such sequences are not really random in their
+mathematical distribution.
+]
+
+So if the object under tests may be effected by the mathematical distribution
+don't draw any conclusions from simple tests with floats generated in that
+way.
+
+Instead you may want to look at the [Random Number Generation] (sub-) library
+introduced with C++11.
+
+.F[:
+Hint, if you need one: make friends with [`std::transform`].
+]
+
+---
+template: plain
+header: ##### Modifying Sequence Operations (cont.)
+
+[`std::transform`]: http://en.cppreference.com/w/cpp/algorithm/transform
+
+Given the following scenario: there are two containers of the same size …
+
+.pull-left[
+… one holding instances of `MyClass` …
+```
+std::list<MyClass> objs;
+… // fill with instances, say
+  // a, b, c ...
+```
+]
+.pull-right[
+… the other simply holding `int` values:
+```
+std::vector<int> args;
+… // fill with values, say
+  // 12, 17, 108 ...
+```
+]
+
+What is the most direct way (avoiding any loops, and also `std::for_each`)
+
+* to call the member function `MyClass::foo(int)`
+  * for the given objects with the given arguments,
+  * and the return values
+    * inserted to a stream `os`,
+    * followed by a slash,
+* i.e the equivalent of the following:._[]
+
+```
+os << a.foo(12) << '/' << b.foo(17) << '/' <<  c.foo(108) << '/' …
+``` 
+
+.F[:
+Hint, if you need one: make friends with [`std::transform`].
+]
+
+---
+template: plain
+header: ##### Modifying Sequence Operations (cont.)
+
+Device a scheme to
+
+* turn the content of a `std::forward_list<unsigned long long>`
+* into a text representation as `std::list<std::string>.._[]
+
+If you have a translation environment based on C++98 only,
+
+* base your solution on `std::copy` and an `std::sstream`, accessed via
+  `std::istream_iterator`-s and `std::ostream_iterator`-s.
+
+If you have a translation environment based on C++11
+
+* base a (second) solution on `std::transform` plus `std::to_string`,
+* and do a comparison which solution performs better.
+
+Are the comparison results plausible?
+
+(Depending on whether the results are plausible to you or not: Explain to
+yourself or a colleague why they are or why you question the plausability!)
+
+.F[:
+The specific container types are not what is of interest here, it is the
+challenge to transformation of a native type to its text representation.
+]
+
+---
+template: plain
+header: ##### Modifying Sequence Operations (cont.)
+
+Fill a vector of notable size with random numbers in the following ways and get
+the timings:
+
+* Simply add new elements at the end.
+* **First** set the number of vector elements accordingly (using `resize`).
+* **First** set the vector data space accordingly (using `reserve`).
+
+Try to get the timing for the *sizing* operations in the second and the third
+case separately from the *filling* operation and chose a size at which the
+differences become clearly noticeable.
+
+Are the differences in the results plausible?
+
+Explain why!
+
+Repeat the above for
+
+* an `std::unordered_multiset` (i.e. no resizing but space reservation), and
+* an `std::array` of fixed size (i.e. no resizing and no space reservation).
+
+Again: Are the results plausible and can you explain why?
+
+---
+template: plain
+header: ##### Modifying Sequence Operations (cont.)
+
+Device a technique with which you can generate a number of random integer values
+with a given percentage of duplicates,._[] i.e. if "30%" duplicates were chosen
+and then
+
+* `std::sort` followed by `std::unique` is applied,
+* it's size should shrink by 30%.
+
+Use such a sequence (with its values random, but shuffled, and the chosen
+percentage of duplicates) to determine the performance of copying it to
+
+* an `std::vector`, then applying `std::sort` and `std::unique`, and
+* an `std::set` (which implies sorting and uniqueness).
+
+Which one is the faster, depending on the percentage of duplicates?
+
+* Try this for no duplicates, 10%, 25%, 50%, 90%, and all duplicates (just
+  all values the same in the last case).
+* What changes if the sequence were (by chance) already sorted, or almost
+  sorted – does this rather hurt or improve performance?
+
+.F[:
+Some hint, if you need one: create a unique, ascending sequence, then add the
+percentage chosen by selecting values at random positions **within** that
+sequence to its end, and finally "shuffle".
+]
+
+---
+template: plain
+header: ##### Modifying Sequence Operations (cont.)
+
+Generate a large random sequence, then compare performance for removing half of
+its values._[] using
+
+* either the container specific member function `remove_if`.
+* or the generic algorithm `std::remove_if`.
+
+If you use the generic algorithm on a resizable container, also get rid of the
+"(now) garbage at the end".
+
+Do this for a selection of STL containers you are interested in.
+
+(Doing it for all eight containers plus native arrays is a task requiring great
+diligence, so you may well stop when you feel you have gathered enough insight.)
+
+.F[:
+Hint: if it can be assumed that even and odd numbers are equally distributed,
+just remove the value with the lowest bit set.
+]
+
+---
+template: plain
+header: ##### Modifying Sequence Operations (cont.)
+
+From the following ways to copy the content of a container, which do you think
+is fastest?
+```
+constexpr std::size_t N = …; // make an appropriate choice
+std::vector<double> v(N);    // maybe fill with std::generate_n ??
+
+/*1*/ std::vector<double> v1;
+      std::copy(v.begin(), v.end(), std::back_inserter(v1));
+/*2*/ std::vector<double> v2; v2.resize(v.size());
+      std::copy(v.begin(), v.end(), v2.begin());
+/*3*/ std::vector<double> v3; v3.reserve(v.size());
+      std::copy(v.begin(), v.end(), std::back_inserter(v3));
+/*4*/ std::vector<double> v4(v.begin(), v.end());
+/*5*/ std::vector<double> v5(v);
+/*6*/ std::vector<double> v6 = v;
+/*7*/ std::vector<double> v7; v7 = v;
+/*8*/ std::vector<double> v8(std::move(v)); // no later use of v !!
+```
+
+.N.center[
+Do **not try** (right now) – think about it and give a **guess**.._[]
+]
+
+.F[:
+Of course, after guessing you may practically prove (or disprove) your answer.
+(Would you have answered differently for an `std::array`? Or if the element type
+were `std::string`? If `v` were defined `const`?)
+]
+
+---
+template: plain
+header: ##### Modifying Sequence Operations (cont.)
+
+Determine the speed (difference) of `std::copy` and `std::move` for containers
+filled with
+
+* `int`-s,
+* `double`-s, and
+* `std::string`-s.
+
+It will most probably not make any difference whether the containers are filled
+with random values, or all values are the same.._[]
+
+Try it for some different containers, at least `std::array`, `std::vector`, and
+`std::list` …
+
+Furthermore, what difference makes it, if instead of the (generic) `std::copy`
+or `std::move` algorithms
+
+* `std:move_backward` or `std::move_backward` is used,
+* the assignment operation for the container class is used,
+* the source container `s` is moved to the target `t`, i.e. `t = std::move(s)`.
+
+.F[:
+But of course, as a diligent and *true STL scientist*, you might not rely on
+your assumptions or "gut feelings", you might test it too …
+]
+
+---
+template: plain
+name: modifying_sequence_op_fwd_vs_bwd
+header: ##### Modifying Sequence Operations (cont.)
+
+To correctly copy or move **overlapping regions** within a container
+
+.pull-left[
+which of
+
+* `std::copy` vs.
+* `std::copy_backward`,
+]
+.pull-right[
+and
+
+* `std::move` vs.
+* `std::move_backward`
+]
+
+needs to be used, depending on
+
+* the location of the source (region)
+* with respect to the destination position?
+
+<p/>
+.N.center[
+If you came here from  
+[adding a `universal_move` / `universal_copy` algorithm]  
+go back now.
+]
+
+---
+template: plain
+name: modifying_sequence_op_rotate
+header: ##### Modifying Sequence Operations (cont.)
+
+Given three iterators `from`, `upto`, and `dest`, and assuming
+
+* `from` closer to the container front as `upto`, and
+* `upto` closer to the container front as `dest`, …
+
+.pull-left[
+```
+std::rotate(from, upto, dest);
+```
+]
+.pull-right[
+… depict graphically the effect of the code fragment shown left.._[]
+]
+
+Then for the following, slightly changed assumptions
+
+* `dest` closer to the container front as `from`, and
+* `from` closer to the container front as `upto` …
+
+.pull-left[
+```
+rotate(dest, from, upto);
+```
+]
+.pull-right[
+… again depict the effect of the code fragment shown left.
+]
+
+<!-- -->
+.N.center[
+If you came here from [adding a `slide` algorithm], go back now.
+]
+
+.F[:
+Assume the layout of an `std::array` or `std::vector` with elements adjacent to
+each other, draw the "state before" and the "state after" side by side, colorize
+the area between `from` and `upto` in the "state before", the colorize the same
+elements in their new position, in the state after.
+]
+
+---
+template: plain
+name: nonmodifying_sequence_ops
+header: ##### Non-Modifying Sequence Operations
+
+Considering `std::for_each` what are the advantages over:
+
+* A "hand-written", index-based loop?
+* A "hand-written", iterator-based loop?
+* A C++11 range-`for` loop?
+
+Would your answer be different if:
+
+* Depending on the exact container type?
+* If const-correctness needs to be ensured?
+* If the loop does
+  * not visit all elements of a container, or
+  * needs to run "back to front"?
+* Depending on whether the loop body
+  * has to go in a functor (only option for C++98 and C++03), or
+  * may alternately use a lambda (since C++11)?
+* The loop body needs
+  * access some variables in the callers scope (read-only), or
+  * has to transfer a result back to the callers scope?
+* If performance._[] is absolutely crucial?
+
+.F[:
+Concerning performance, maybe do some measurements, comparing
+`std::for_each` with its alternatives.
+]
+
+---
+template: plain
+header: ##### Non-Modifying Sequence Operations (cont.)
+
+Consider the group `std::all_of`, `std::any_of`, and `std::none_of`.
+
+Is it that actually all three are required?
+
+Can you demonstrate how one of it might be substituted by some other?
+
+Might even each of the three substitute both of the others?
+
+* If this is **not** so, which one(s) is/are the indispensable?
+* If so, why have all three?
+  * For performance?
+  * For readability?
+  * For both reasons?
+
+Can you demonstrate – via taking timings – any "short-cut" effect, i.e. that
+these algorithm run faster (or slower) depending on the particular data?
+
+---
+template: plain
+header: ##### Non-Modifying Sequence Operations (cont.)
+
+Do a performance comparison for `std::count_if`, depending on how the predicate
+is handed over:
+
+* via a lambda;
+* via a functor and the relevant `operator()` overload defined
+  * implicitly inline, or
+  * explicitly `inline`;
+* with a function pointer and the function implementation
+  * in the same translation unit,
+    * without the keyword `inline`, or
+    * with the keyword inline, or
+  * in a different translation unit (so "silent inlining by the compiler is
+    made impossible).
+
+Compare for constant conditions (e.g. count all elements less than 12) and for
+the case (say: the limit 12) comes from a variable of the calling scope.
+
+To complete the set of comparisons, also compare with a case for which the
+plain `std::count` (comparison with fixed value) would have sufficed.
+ 
+---
+template: plain
+header: ##### Non-Modifying Sequence Operations (cont.)
+
+Is the following code "correct" considering the leeway the STL specification
+gives to implement `std::find_if`?
+```
+// find first value exceeding the sum of all the previous ones:
+std::vector<int> v;
+… // assume v filled somehow
+assert(v.size() >= 1)
+int sum = v.font();
+auto pos = std::find_if(v.begin()+1, v.end(),
+                        [&sum](int e) { return (e > sum)
+                                            ? true
+                                            : (sum += e, false);
+                        });
+```
+
+Will your answer change if not the first of these values is looked up, but all
+are counted with `std::count_if`?
+```
+auto cnt = std::count_if(v.begin()+1, v.end(),
+                         [&sum](int e) { const auto res{e > sum};
+                                         sum += e;
+                                         return res;
+                         });
+```
+
+---
+template: plain
+header: ##### Non-Modifying Sequence Operations (cont.)
+
+[C++11 Multi-Threading]: http://en.cppreference.com/w/cpp/thread
+[`std::async`]: http://en.cppreference.com/w/cpp/thread/async
+[`std::count`]: http://en.cppreference.com/w/cpp/algorithm/count
+
+.I[
+The following is advanced in so far as it expects familiarity with
+[C++11 Multi-Threading], at least to the degree that the use of
+[`std::async`] is understood.._[]
+]
+
+Given your program executes on a multi-core CPU, try to beat the STL
+implementation of [`std::count`] performance-wise: 
+
+* Split the work to be done to two or four distinct data blocks (ideally chose
+  this number according to the CPU capabilities),
+* start the functions asynchronously,
+* then collect (and finally add) the results.
+
+.F[:
+Of course, if you are hot now on trying to beat the STL library performance
+on a multi-core CPU, that you are willing to acquire the necessary knowledge
+right now, feel free to do so. Especially as using `std::async` is not **that**
+hard and you need to know close to nothing about all the intricacies that
+usually go with multi-threading.
+]
+
+---
+template: plain
+header: ##### Non-Modifying Sequence Operations (cont.)
+
+Compared to the following code fragment …
+```
+struct LessThanLast {
+    std::string &last;
+    LessThanLast(const string &last_) : last(last_) {}
+    bool operator(const std::string &e) {
+        const std::string t = last; last = e; return (e < t);
+    }
+};
+… // assume properly initialised std::vector<std::string> v
+std::string last{};
+auto pos = std::find_if(v.begin(), v.end(), LessThanLast(last));
+```
+
+… first guess, then try what gives the bigger performance improvement:
+
+* while **keeping** the implementation of `LessThanLast::operator()` …
+  * … replace the functor with an equivalent lambda;
+  * … replace `std::find_if` with an equivalent hand-written loop;
+* or **changing** the implementation of the functor to:
+
+```
+        const bool r = (e < last); last = e; return r;
+```
+
+---
+template: plain
+header: ##### Non-Modifying Sequence Operations (cont.)
+
+[`std::find…`]: http://en.cppreference.com/w/cpp/algorithm/find
+[`std::search…`]: http://en.cppreference.com/w/cpp/algorithm/search
+[Boyer-Moore]: https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string_search_algorithm
+[Boyer-Moore-Horspool]: https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore%E2%80%93Horspool_algorithm
+[Knuth-Morris-Pratt]: https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm
+
+**First:** Understand the difference between
+
+* "finding" – i.e. the [`std::find…`]-algorithm family and
+* "searching" – i.e. the [`std::search…`]-algorithm family.._[]
+
+**Then:** Determine by a practical examination whether there is (still)
+a substantial difference in speed, so that it could make sense to
+
+* first check if the sequence to *search* for has only one member, and
+* then eventually prefer *find* over it?
+
+(Maybe given you have determined in advance that 90% of your searching
+through the haystack is a for a needle of just one element.)
+
+-------------------------------------------------------------------------------
+[Boost.Algorithm]: http://www.boost.org/doc/libs/release/libs/algorithm/doc/html/index.html
+
+If you have installed [Boost.Algorithm] you may include in your research also
+implementations according to [Boyer-Moore], [Boyer-Moore-Horspool], and
+[Knuth-Morris-Pratt].
+
+.F[:
+You see, it is not quite the difference of the colloquial use, but depending
+on the outcome of the above, you might have an aide-memoir: *Finding* is better
+than *Searching*.
+]
+
+---
+template: plain
+header: ##### Non-Modifying Sequence Operations (cont.)
+
+[`std::equal…`]: http://en.cppreference.com/w/cpp/algorithm/equal
+
+How does comparing two ranges for equal content with a generic algorithm from
+the [`std::equal…`]-family perform in comparison to `operator==`, applied to the
+container itself?
+
+.pull-left[
+Direct container comparison (`operator==` forwards to comparing element by element) …
+```
+std::vector<int> x, y;
+… // fill with data
+if (x == y) …
+```
+]
+.pull-right[
+… and the generic STL algorithm:
+```
+std::vector<int> x, y;
+… // fill with data
+if (equal(x.begin(), x.end(),
+          y.begin(), y.end());
+```
+]
+
+Repeat the comparison for an `std::deque` and an `std::list`.._[]
+
+**First** think about this:  
+Which obvious shortcut exists in the implementation of `operator==` for some
+container class … (to hint further: except for `std::forward_list`)?
+
+**Then**: Design your test cases to show that effect (too)!
+
+.F[:
+But also be sure to understand that the (probably much worse) results for the
+`std::list` come from bad cache-hit-rates, caused by its non-contiguous memory
+layout.
+]
+
+---
+template: plain
+header: ##### Non-Modifying Sequence Operations (cont.)
+
+Given the following simple *Iota Generator with an Iterator Interface* …
+```
+class IotaGenerator 
+    : public std::iterator<std::input_iterator_tag, int> {
+    int value;
+public:
+    IotaGenerator(bool zero_origin = true)
+        : value(zero_origin ? 0 : 1) {}
+    IotaGenerator operator++() {
+        return *this;
+    }
+    int operator*() const {
+        return value++;
+    }
+};
+```
+
+… how could you use this to check whether some `std::vector<int>` holds
+consecutively increasing values 0, 1, 2, … (up to its size less 1)?
+
+* How would you chose 1-origin instead of 0-origin?._[]
+
+.F[:
+Only as a footnote as it is an aside to the algorithms, covered here: which
+modifications would make sense to give the `IotaGenerator` an even broader
+applicability, say generate a sequence from any start value with any step
+width, or even with any expression calculating the next value?
+]
+
+---
+template: plain
+header: ##### Non-Modifying Sequence Operations (cont.)
+
+[`std::equal…`]: http://en.cppreference.com/w/cpp/algorithm/equal
+[SSCCE]: http://sscce.org/
+
+The `std::equal…`-family has four members total. Decide._[] which one would
+you chose to solve the following problems to compare …._[]
+
+* … different containers of the same size, with the same element type;
+* … containers of the same type, including the same element type, but of
+  different size, for an equality within the limits of the shorter one;
+* … containers of same type and with the same element type, the second
+  possibly being shorter;
+* … `std::list<std::string>` containers of equal size, ignoring differences
+  with respect to upper/lower case;
+* … `std::vector<int>` with `std::vector<double>`;
+* … `std::array<double>` with `std::istringstream` holding `double` values in
+  text form;
+* … `std::vector<const char *>` with `std::vector<const std::string>` (based on
+  the content of the strings if interpreted according to the C-rules).
+* … `std::array<double>` with an array<std::string> of the same size, assuming the
+  content of the strings is convertible to double;
+* … as before but taking empty strings to represent zero.
+
+.F[:
+Of course it would be nice if you defend your decision by providing some
+[SSCCE]s, and in case there are different equally simple solutions, if you point
+out which one is more performant.
+]
+
+---
+template: plain
+name: partitioning_and_sorting_ops
+header: ##### Partitioning and Sorting Operations
+
+[`header <functional>`]: http://en.cppreference.com/w/cpp/header/functional#Comparisons
+
+How would you sort …
+
+* … an `std::array<int>` into decreasing order, using …
+  * … a comparison function (i.e. function pointer)?
+  * … a comparison functor?
+  * … a comparison lambda?
+  * … nothing of the above but "C++98 Bordmittel" only?  
+    (Hint: see `header <functional>`)
+* … an `std::vector<const char *>` (assumed to hold "classic C-strings") by
+  their native character set order, i.e. like `std:strcmp` compares?._[]
+* … an `std::vector<std::string>` ignoring differences in case?
+* … an `std::forward_list<double>` into ascending order?
+* … an `std::set<std::string>` into descending order?
+* … an `std::array<int>` as shown in the example below:
+  * 5, 7, -4, 33, 112, -5, 17, 12, -1, 33, 1024 (before sorting)
+  * 5, 7, 12, 17, 33, 33, 112, 1024, -5, -4, -1 (after sorting)
+
+.F[:
+Note that this is slightly underspecified, as it is not said whether the order
+of code points or code units are to be considered. The good news is: for UTF-8
+coded `std::string`-s it doesn't matter - both orders are the same. For UTF-16
+coded `std::wstrings` this is only true for characters in the BMP (assuming
+`wchar_t` having 16 bits, what is the usual choice in MS-Windows and Java).
+]
+
+---
+template: plain
+header: ##### Partitioning and Sorting Operations (cont.)
+
+[`std::sort`]: http://en.cppreference.com/w/cpp/algorithm/sort
+[`std::stable_sort`]: http://en.cppreference.com/w/cpp/algorithm/sort
+
+Do a performance evaluation of [`std::sort`] vs. [`std::stable`] using
+
+* test containers with a varying percentages of elements comparing equal
+  * from all elements unique
+  * to all elements equal
+* and element types with different "costs" for swapping.
+
+.N[
+To prepare your analysis, you might **think about swapping costs** first, or
+even run some isolated tests in advance, so that the degree to which swapping
+costs vary in your test-setup becomes clear.._[]
+]
+
+.F[:
+As a hint for the lazy (or those who want to hurry to the core task): Choosing
+`std::vector<int>` **as element type(!)** for the sorted container, vs. choosing
+`std:array<int>` will dramatically vary the swapping cost, easily controlled
+by the size of those **element** containers. Also, the comparison cost can
+be controlled by defining an comparison operation that compares a smaller or
+larger initial part of the element containers.
+]
+
+---
+template: plain
+header: ##### Partitioning and Sorting Operations (cont.)
+
+[`std::partial_sort`]: http://en.cppreference.com/w/cpp/algorithm/sort
+
+Given an `std::vector<int>`, holding unique but unsorted values from 1 to some
+large upper limit, what approach is to prefer (over a full sort) if
+
+* **first** the 1 … 25000 part needs to processed **fully sorted**, and only
+* **then** it can be decide whether the 25001 … 50000 part needs to be processed
+  (fully sorted), before
+* **then** a decision can be made whether the 50001 … 75000 part needs to be
+  processed,
+* … (etc.) …
+
+.F[:
+As a hint, if you need one: look-up [`std::partial_sort`].  
+And for all who ask themselves: Where might the above approach ever apply?  
+Here is a story – not from software development and also not from "real live",
+it has been invented for that purpose – but nevertheless, you might want to
+listen (or read-on, resp.):   
+In a small village there lives a farmer who's meadows became muddy from a long
+period of rain. He wants to reinforce a path he often needs to take, so he calls
+the lumber to bring some planks. Though the farmer doesn't know the exact length
+of that pathway, it's clear that just some 10 or 20 planks will not suffice, may
+be 60, 80, or even 100 are required (and of course this depends on the plank's
+length too, the farmer doesn't know).  
+The carpenter has far beyond 100 planks in his magazine, of which he could bring
+as much as necessary to the farmer, but the planks are of vastly differing
+length, and not stored sorted (only each one has been marked with its length
+by pencil).  
+And there are two more constraints: the number of planks the carpenter can
+load on his decrepit [Tempo Dreirad] is strictly limit to 42. Furthermore, he
+knows he will have to carry each plank separately (together with the farmer)
+to its final position. To minimize that part of work it makes sense to arrange
+the planks on the freight motor tricycle's cargo area for unloading in order of
+decreasing length.  
+And as our carpenter is a clever one, he carries out his work more or less in the
+way described (abstractly) as the task at hand on this page.
+]
+
+[Tempo Dreirad]: http://www.tempo-dienst.de/Museum/Tempo1a.jpg
+
+---
+template: plain
+header: ##### Partitioning and Sorting Operations (cont.)
+
+[`std::partition`]: http://en.cppreference.com/w/cpp/algorithm/partition
+[`std::stable_partition`]: http://en.cppreference.com/w/cpp/algorithm/stable_partition
+
+Given an `std::vector<int>`, holding random values between 0 and 999
+(total size say 10000 elements, so with many duplicates),
+
+* how much faster is an approach
+  * with partitioning only,
+  * compared to a full sort
+* if you only need to separate the groups
+  * 0 … 9 – to be processed first,
+  * 10 … 99 – to be processed second, and
+  * 100 … 999 – to be processed last,
+* with no particular order of elements within any these groups?
+
+Compare the performance your approach against running a full sort.
+
+.F[:
+As a hint, if you need one: look-up [`std::partition`]. And as a separate but
+related part, while you are at it, you may also lookup (or measure) the
+difference to [`std::stable_partition`].
+]
+
+---
+template: plain
+header: ##### Partitioning and Sorting Operations (cont.)
+
+Compare the speed of `std::is_sorted` to `std::sort`.
+
+* Does the speed of any or both of the above depend on whether the container is
+  already sorted when the operation is started?
+* Assuming an already sorted container in both cases, how does the
+  speed relation depend
+  * on the container size, and
+  * on the element type (say `int` vs. `std::string`)?
+
+--------------------------------------------------------------------------------
+
+[`std::sort`]: http://en.cppreference.com/w/cpp/algorithm/sort
+[`std::is_sorted_until`]: http://en.cppreference.com/w/cpp/algorithm/is_sorted_until
+[`std::inplace_merge`]: http://en.cppreference.com/w/cpp/algorithm/inplace_merge
+
+Consider the case of a large STL container that needs to be sorted before
+further use.
+
+* Usually a large initial section is already sorted (from the last time the
+  sort step was applied).
+* Only, in the meantime, more entries have been appended to the end.
+
+Given what the STL algorithms provides, what seems to be a good way?._[]
+
+(Also compare the performance of this approach to to running a full sort.)
+
+.F[:
+As a hint, if you really need one: besides [`std::sort`], look-up
+[`std::is_sorted_until`], and [`std::inplace_merge`].
+]
+
+---
+template: plain
+header: ##### Partitioning and Sorting Operations (cont.)
+
+[C++11 Multi-Threading]: http://en.cppreference.com/w/cpp/thread
+[`std::async`]: http://en.cppreference.com/w/cpp/thread/async
+[`std::sort`]: http://en.cppreference.com/w/cpp/algorithm/sort
+[`std::inplace_merge`]: http://en.cppreference.com/w/cpp/algorithm/inplace_merge
+
+.I[
+The following is advanced in so far as it expects familiarity with
+[C++11 Multi-Threading], at least to the degree that the use of
+[`std::async`] is understood.._[]
+]
+
+Try to beat the STL implementation of `std::sort` performance-wise: 
+
+* Split the work to be done to two equal-sized data blocks.
+* For each start an [`std::sort`] asynchronously,
+* then wait for both to end, and
+* combine the two sorted blocks with [`std::inplace_merge`].
+
+Furthermore (optional):
+
+* Outline the "recipe" to utilize 4 CPU cores, and
+* any may be generalise that to 2<sup>N</sup> CPU cores.
+
+(With the right approach, even the general case is easy to achieve … much easier
+as you might thing at first – *but think at first* before you advance to an
+implementation.)
+
+.F[:
+Learning to use `std::async` is not **that** hard, as and you need to know
+close to nothing about the intricacies of general multi-threading.
+]
+
+---
+template: plain
+name: binary_search_ops
+header: ##### Binary Search (on Sorted Ranges)
+
+Make your familiar with the "Simple Random Test Patter Generator" [SRTPG] and
+how it is used to analyse the performance of some associative containers.
+
+Then adapt the tests of `std::set` to make use the [Set Operations] on sorted
+ranges, provided as STL algorithms.
+
+Is there a measurable difference in performance?
+
+Are there any operations that can be done easily with STL algorithms but not
+with the container classes or vice versa?
+
+---
+template: plain
+name: alternative_set_ops
+header: ##### Set Operations (on Sorted Ranges)
+
+---
+template: plain
+name: #alternative_heap_ops
+header: ##### Heap Operations
+
+---
+template: plain
+name: minmax_ops
+header: ##### Minimum/Maximum Operations
+
+[`std::next_permutation`]: http://en.cppreference.com/w/cpp/algorithm/next_permutation
+[`std::prev_permutation`]: http://en.cppreference.com/w/cpp/algorithm/next_permutation
+
+Given that there is no other "memory" as the sequence to permute:._[]
+
+* How can [`std::next_permutation`] determine
+  * to return `true` in most any calls,
+  * except when "it is through once" completely?
+* Same for `std::prev_permutation`? (Only the other way round.)
+
+So, if you came to an answer, explain the following code …
+```
+do {
+    std::copy(std::begin(data), std::end(data),
+              std::ostream_iterator<int>(std::cout));
+    std::cout << std::endl;
+} while (std::next_permutation(std::begin(data), std::end(data)));
+```
+.pull-left[
+… shows 24 permutation here …
+```
+int data[] = { 1, 2, 3, 4 };
+```
+]
+.pull-right[
+… but fewer here:
+```
+int data[] = { 0, 8, 1, 5 };
+```
+]
+
+Any idea?._[]
+
+.F[:
+Change `std::string` to `const char *` and things might even get more obscure …
+]
+
+* [Numeric Operations			](#numeric_ops)
 
 ---
 template: plain
@@ -1112,11 +2428,9 @@ header: #### Understand `std::nextpermutation`
 
 ##### Requirements
 
-TBD
-
-#####  Steps To Solution
-
-TBD
+---
+template: plain
+header: #####  Steps To Solution
 
 ---
 template: plain
