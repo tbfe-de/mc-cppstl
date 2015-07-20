@@ -1,0 +1,36 @@
+#define USE_HASH_BASED_MAP
+
+#include <algorithm>
+#include <cassert>
+#include <string>
+#include <sstream>
+#include <vector>
+
+#ifndef USE_HASH_BASED_MAP
+#include <map>
+using WordFreq = std::map<std::string, int>;
+#else
+#include <unordered_map>
+using WordFreq = std::unordered_map<std::string, int>;
+#endif
+
+int main() {
+    std::istringstream in{"one two one two three one"};
+    WordFreq wfreq;
+    std::string w;
+    while (in >> w)
+        ++wfreq[w];
+    std::vector<WordFreq::value_type> result;
+    std::copy(wfreq.cbegin(), wfreq.cend(),
+              std::back_inserter(result));
+    const std::vector<WordFreq::value_type> expected = {
+                                            { "one", 3 },
+                                            {"three", 1},
+                                            {"two", 2} };
+#ifndef USE_HASH_BASED_MAP
+    assert(result == expected);
+#else
+    assert(std::is_permutation(result.cbegin(), result.cend(),
+                               expected.cbegin()));
+#endif
+}

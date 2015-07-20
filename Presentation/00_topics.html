@@ -33,7 +33,7 @@ layout: true
 name: plain
 copyright: (CC) BY-SA
 branding:  [Dipl.-Ing. Martin Weitzel](http://tbfe.de)
-customer:  [im Auftrag von MicroConsult Training & Consulting GmbH](http://microconsult.de)
+customer:  [für MicroConsult Training & Consulting GmbH](http://microconsult.de)
 
 <!--
   *****************************************************************************
@@ -66,7 +66,7 @@ layout: true
 name: see_BoostBook
 copyright: (CC) BY-SA
 branding:  [Dipl.-Ing. Martin Weitzel](http://tbfe.de)
-customer:  [im Auftrag von MicroConsult Training & Consulting GmbH](http://microconsult.de)
+customer:  [für MicroConsult Training & Consulting GmbH](http://microconsult.de)
 
 <!--
   *****************************************************************************
@@ -94,11 +94,12 @@ layout: true
 name: withinfo
 copyright: (CC) BY-SA
 branding:  [Dipl.-Ing. Martin Weitzel](http://tbfe.de)
-customer:  [im Auftrag von MicroConsult Training & Consulting GmbH](http://microconsult.de)
+customer:  [für MicroConsult Training & Consulting GmbH](http://microconsult.de)
 
 <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
 <!-- end of templates ... below comes the REALCONTENT - TNETNOCLAER ends it -->
 <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+
 ---
 template: blank
 name: frontmatter
@@ -123,6 +124,19 @@ name: frontmatter
 	http://www.microconsult.com
 ]
 
+.copyright[
+**Copyright © 2015**  
+**Martin Weitzel**
+
+![CC BY-SA](cc_by-sa.svg)  
+
+This work is provided under a  
+[Creative Commons Attribution-ShareAlike License](https://creativecommons.org/licenses/by-sa/3.0/)
+
+]
+
+
+
 ---
 template: plain
 class: agenda
@@ -133,25 +147,49 @@ Topics (including Optional Parts._[]) – Covering two Days, Morning and Afterno
 
 ------------------------------------------------------------------------------
 
+.pull-left[
 **FIRST DAY**
 
 * [Fundamental Architecture				](01_day1.html)
 * [STL Containers					](02_day1.html)
-* [Estimating Performance and Footprint 		](x1_day1.html)
+* [Considering Runtime Performance and Memory Footprint	](x1_day1.html)
 
-------------------------------------------------------------------------------
-
+]
+.pull-right[
 **SECOND DAY**
 
 * [Iterators and Algorithms				](03_day2.html)
 * [Extending the STL					](04_day2.html)
 * [Odds and Ends 					](x2_day2.html)
 
+]
+
+<!-- -->
+
 ------------------------------------------------------------------------------
 
 Optional Parts (third topic each day) may be integrated with practical exercises
-on the first day, while on the second day will mainly discuss (more) small
-demo programs and that way partially replace (individual) practical exercises.
+on the first day, chosen from:
+
+------------------------------------------------------------------------------
+
+.pull-left[
+
+* [A Selection of Micro-Projects	](microprojects.html)
+
+]
+.pull-right[
+
+* [With Solutions			](Micro-Projects)
+
+]
+
+<!-- -->
+
+------------------------------------------------------------------------------
+
+On the second day solutions to the above, explained as demo-programs, may
+partially replace individual practical exercises.
 
 ---
 
@@ -365,6 +403,41 @@ end (or can locate it easily by searching for LAST HINT); if you start from here
 instead from the top it may be be easier to discover the document structure, as at
 the beginning there are first a number of layout template pages not visible in the
 browser.
+
+---
+template: plain
+name: annotations
+header: ## A Hidden Jewel …
+
+[Algorithm Library]: http://en.cppreference.com/w/cpp/algorithm
+[Alexander Stepanov]: http://www.stlport.org/resources/StepanovUSA.html
+[David Musser]: http://www.cs.rpi.edu/~musser/
+[Sean Parent]: https://twitter.com/seanparent
+
+… seems to be the [Algorithm Library] part of the STL, judging from how often
+it stays unused while creativity is put into coding more or less complicated
+"little pieces of art" (ironic innuendo not by accident).
+
+If there is some time left until we start – may be because we have to wait for
+late-comers – the following lecture by *Sean Parent* may be of interest:
+
+.N.center[
+https://www.youtube.com/watch?v=IzNtM038JuI
+]
+
+[Minute 04:16]: https://www.youtube.com/watch?feature=player_detailpage&v=IzNtM038JuI#t=256
+[Minute 12:30]: https://www.youtube.com/watch?feature=player_detailpage&v=IzNtM038JuI#t=750
+
+If there are at least 10…15 minutes to bridge, a good starting point is at
+[Minute 12:30].._[]
+
+.F[:
+If there time for that kind of intermezzo right now but you want to see later
+on your own how a really complicated code gets simplified by using appropriate
+STL-algorithms, you may view from [Minute 4:16]. Or go right to the beginning
+and watch the introduction too – the host is [Alexander Stepanov], who designed
+the STL 20 years ago together with [David Musser].
+]
 
 </textarea>
 <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->

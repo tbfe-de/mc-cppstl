@@ -131,7 +131,7 @@ p {
 /* ---------------------------------------------------------------- HEADINGS */
 h1, h2, h3 {
 	font-weight: 400;
-	margin-bottom: 0.5em;
+	margin-bottom: 0.8em;
 }
 h1 {
 	font-size: 2.5em;
@@ -139,18 +139,12 @@ h1 {
 }
 h2 {
 	font-size: 2em;
-	margin-bottom: 0.3em;
 }
 h3 {
-	font-size: 1.5em;
-}
-h2 code.cpp.remark-code,
-h3 code.cpp.remark-code {
-	font-size: 90%;
+	font-size: 1.3em;
 }
 h4 {
-	font-size: 1.2em;
-	margin-bottom: 0;
+	font-size: 1.0em;
 }
 
 /* ------------------------------------------------------------------- LINKS */
@@ -200,11 +194,8 @@ div.remark-slide-number {
 	padding-bottom: 4px;
 	font-size: 90%
 }
-div.remark-notes-area {
-	font-size: 12px
-}
-div.remark-slide-notes {
-	font-size: 12px
+div.remark-notes {
+	font-size: 70%
 }
 
 /*
@@ -234,7 +225,7 @@ div.remark-slide-notes {
 	padding: 8px;
 	border: solid medium darkgrey;
 	padding: 0.7em;
-	font-size: 28px;
+	font-size: 24px;
 	color: #000099;
 	background: white;
 	line-height: 150%;
@@ -246,6 +237,10 @@ div.remark-slide-notes {
 #slide-frontmatter .client {
 	padding-top: 2em;
 	font-size: 15px;
+}
+#slide-frontmatter .copyright {
+	padding-top: 8em;
+	font-size: 14px;
 }
 
 /* ---- FOOTNOTE INDICATOR -------------------------- (for use in body text) */
@@ -259,13 +254,6 @@ div.remark-slide-notes {
 	content: "*";
 }
 
-/* ---- TABLE -------------------------------- add border lines around cells */
-table {
-    border-collapse: collapse;
-}
-table td, table th {
-        border: 2px solid blue;
-}
 /* ---- NOTICE ------------ make block standing a little bit over usual text */
 .N {
 	-moz-box-shadow: 10px 10px 5px #888;
@@ -319,7 +307,7 @@ table td, table th {
 	background: red;
 	color: white;
 }
-.W code.cpp.remark-code {
+.W code.remark-code {
 	color: black;
 }
 @media print { /* For a more uniform appperance */
@@ -411,15 +399,6 @@ div.infolink {
 	right: 2em;
 }
 
-/* ---- DOCULINK --------------------- special area to link to documentation */
-div.refersto {
-	font-size: 0.5em;
-	color: gray;
-	position: absolute;
-	top: 2em;
-	right: 2em;
-}
-
 /* ---- PAGEFOOTER ------------------- special area to display a page footer */
 .pagefooter {
         position: absolute;
@@ -432,7 +411,7 @@ div.refersto {
         height: 1.9em;
 	bottom: 12px;
         left: 40px;
-	right: 85px;
+	right: 110px;
 }
 
 @media screen {
@@ -569,15 +548,9 @@ div.linkpage span.X {
 		-webkit-box-shadow: none;
 		box-shadow: none;
 	}
-	.remark-container.remark-presenter-mode .remark-slide-notes {
-		width: 708px;
-	}
-	@page {
-		size: 21cm 29.7cm;
-	}
 }
-
 @page {
+	size: A4;
 	margin: 0;
 }
 
