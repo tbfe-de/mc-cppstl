@@ -258,7 +258,6 @@ provide random access with a numeric index by using
 with an integral value as argument. Only the latter is
 
 * **required** to check the index at run time and
-
 * will throw an `std::out_of_range` exception
 
 if it does not denote a valid entry.._[]
@@ -271,7 +270,7 @@ the consequences of the fact that the containers are typically
 
 .F[:
 Of course – as it was already the case in C – any index-based random access uses
-0-origin, i.e. for some `container c` the valid range is `0` … `c.size()-1`.
+0-origin, i.e. for some `Container c` the valid range is `0` … `c.size()-1`.
 ]
 
 ---
@@ -280,7 +279,7 @@ header: #### Out of Range Indices
 
 For some container supporting index-based access …
 ```
-container c;               // for container assume any of
+Container c;               // for container assume any of
                            // std::array, std::deque, std::vector
 container::size_type idx;  // defined by all STL containers
 ```
@@ -317,7 +316,7 @@ operation for maps, which *always* returns a reference to an existing
 template: plain
 header: #### Unsigned Indexing Expressions
 
-Frequently variables used for indexing will have an unsigned type._[]
+Frequently variables used for indexing will have an unsigned type.._[]
 
 .W[
 Evaluating expressions with unsigned operands – more often than not –
@@ -409,7 +408,6 @@ order of insertions.
 
 .N[
 Nevertheless the STL containers provide a solid foundation on which containers
-
 with special features could be built.
 ]
 
@@ -435,15 +433,13 @@ header: #### Sets versus Maps
 
 Sets and maps have in common that entries may be looked-up efficiently, with
 
-* O(log<sub>2</sub>N) performance for the [hash-based](#ordered_associative) and
-
-* O(1) performance for [tree-based](#ordered_associative) variants.
+* O(log<sub>2</sub>(N)) performance for the [tree-based](#ordered_associative) and
+* O(1) performance for [hash-based](#unordered_associative) variants.
 
 The difference is with respect to entries, which is a
 
 * *single value* (either native type or class instance) for a
   [set](#set_container_commonalities),
-
 * *key and  value*._[] (both either native type or class instance) for a
   [map](#map_container_commonalities).
   
@@ -528,7 +524,7 @@ Containers of this category use tree-based storage, hence:
 
 * The ordering relation may impose any criteria, as long as it
 
-  * is not self-contradicting, i.e. from `a < b` follows `!(b <= a)`, and
+  * is not self-contradicting, i.e. from `a < b` must follow `!(b < a)`, and
   * applies transitively, i.e. with `a < b` and `b < c` it follows that `a < c`.
 
 On sequential traversal the elements are visited in ascending sort order,

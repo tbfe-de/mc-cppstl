@@ -6,12 +6,12 @@
 #include <set>
 #include <string>
 
-void word_freq_map(std::istream &in, std::ostream &out) {
+void word_freq_multiset(std::istream &in, std::ostream &out) {
     std::multiset<std::string> word_freq;
     std::string w;
     while (in >> w)
         word_freq.insert(w);
-    for (auto it = word_freq.cbegin(); it != word_freq.cend();) {
+    for (auto it = word_freq.cbegin(); it != word_freq.cend();/* no ++it !!!*/) {
         const auto count = word_freq.count(*it);
         out << *it << ": " << count << '\n';
         std::advance(it, count);
@@ -20,7 +20,7 @@ void word_freq_map(std::istream &in, std::ostream &out) {
 
 #ifndef TDD
 int main() {
-    word_freq_map(std::cin, std::cout);
+    word_freq_multiset(std::cin, std::cout);
 }
 #else
 
@@ -35,7 +35,7 @@ int main() {
     );
     std::ostringstream expect;
 //  ----------------------------
-    word_freq_map(send, expect);
+    word_freq_multiset(send, expect);
 //  ----------------------------
     assert(expect.str() ==
         "Bandersnatch: 1"   "\n"

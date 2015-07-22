@@ -166,8 +166,38 @@ This work is provided under a
 
 ]
 
+---
+layout: true
+name: microproject
+copyright: (CC) BY-SA
+branding:  [Dipl.-Ing. Martin Weitzel](http://tbfe.de)
+customer:  [im Auftrag von MicroConsult Training & Consulting GmbH](http://microconsult.de)
 
+<!--
+  *****************************************************************************
+  Template used for for pages INTRODUCING to a new Info-Graphic
+  *****************************************************************************
+  On this kind of pages a size-reduced version of the whole info graphic will
+  be reproduced and occupies aproximately 2/3 of the page width. So only add
+  little information, preferrably links to later pages dealing with single
+  sections of the info graphic.
 
+  On pages USING THIS TEMPLATE the following attributes must be set:
+
+  graphic: file path to of the infographic EXCLUDING the suffix.
+  header: ## and header text (i.e. including the markdown formatting indicator)
+
+-->
+
+{{header}}
+
+.infolink.right[
+See Code: [{{source}}](Micro-Projects/{{source}}.cpp)
+]
+
+.pagefooter[
+{{copyright}}: {{branding}} {{customer}} .microconsult-logo[]
+]
 
 ---
 template: plain
@@ -645,20 +675,20 @@ the repetition count for differently powerful CPUs.
 The latter can be solved automatically:
 ```
 template<typename Callable>
-std::tuple<std::clock_t, int>
-cpu_seconds(Callable fragment, double min = 1.0, int runs = 100) {
+std::tuple<int, double>
+cpu_seconds(int runs, Callable fragment, double min = .5) {
     double delta_time;
-    int multiply{0};
+    bool multiply{0};
     do {
-        runs *= (multiply ? (multiply = 1) : (multiply *= 2));
-        const auto start_time{std::clock()};
+        runs *= (multiply ? (multiply = 1) : 2);
+        const auto start_time = std::clock();
         for (auto i = 0; i < runs; ++i)
             fragment(); // to time
-        const auto end_time{std::clock()};
+        const auto end_time = std::clock();
         delta_time = static_cast<double>(end_time - start_time)
                    / static_cast<double>(CLOCKS_PER_SEC);
     } while (delta_time < min);
-    return {delta_time, runs};
+    return std::make_tuple(runs, delta_time);
 }
 ```
 
@@ -1157,7 +1187,8 @@ groups linearly, but "move around" within **and** between the groups.
 ]
 
 ---
-template: plain
+template: microproject
+source: my_copy_if
 name: modifying_sequence_ops
 header: ##### Modifying Sequence Operations
 
@@ -1171,8 +1202,9 @@ How?
 
 Demonstrate with an example program!
 
-Can you spot other "redundant functionality" in that sense, when skimming the
-content of the [Algorithm Library]?
+When skimming the content of the [Algorithm Library], can you spot other
+"redundant functionality" like that, i.e. algorithms that can be easily
+expressed by others.
 
 (The last question is posed not only with respect to the *modifying sequence
 operations*, as covered in this section, but all of the algorithm library.)
@@ -1353,7 +1385,7 @@ header: ##### Modifying Sequence Operations (cont.)
 Device a scheme to
 
 * turn the content of a `std::forward_list<unsigned long long>`
-* into a text representation as `std::list<std::string>.._[]
+* into a text representation as `std::list<std::string>`.._[]
 
 If you have a translation environment based on C++98 only,
 
@@ -1379,8 +1411,8 @@ challenge to transformation of a native type to its text representation.
 template: plain
 header: ##### Modifying Sequence Operations (cont.)
 
-Fill a vector of notable size with random numbers in the following ways and get
-the timings:
+Fill a vector of notable size with random numbers in the following, alternative
+ways and get the timings:
 
 * Simply add new elements at the end.
 * **First** set the number of vector elements accordingly (using `resize`).
@@ -1507,7 +1539,7 @@ Try it for some different containers, at least `std::array`, `std::vector`, and
 Furthermore, what difference makes it, if instead of the (generic) `std::copy`
 or `std::move` algorithms
 
-* `std:move_backward` or `std::move_backward` is used,
+* `std:copy_backward` or `std::move_backward` is used,
 * the assignment operation for the container class is used,
 * the source container `s` is moved to the target `t`, i.e. `t = std::move(s)`.
 
@@ -1736,7 +1768,7 @@ Compared to the following code fragment …
 ```
 struct LessThanLast {
     std::string &last;
-    LessThanLast(const string &last_) : last(last_) {}
+    LessThanLast(string &last_) : last(last_) {}
     bool operator(const std::string &e) {
         const std::string t = last; last = e; return (e < t);
     }
@@ -2408,7 +2440,7 @@ First guess which of the following might improve most, then try (and compare):
 * Use the `std::transform` algorithm instead of a range-`for` loop to fill the
   `minimums` and `maximums` container.
 * Replace the calls to [`std::min_element`] and [`std::max_element`] by a single
-  one to [`minmax_element`].
+  one to [`std::minmax_element`].
 * Change the `minimums` and `maximums` container to `std::vector`.._[]
 * Change the `data` container to `std::vector` or `std::array`.
 

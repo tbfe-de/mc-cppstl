@@ -437,7 +437,9 @@ template: plain
 name: abstract_specification
 header: #### Concepts and Models
 
-Two key terms in the STL documentation are ["Concept" and "Model"].._[]
+[*Concept* and *Model*]: http://en.wikipedia.org/wiki/Concepts_%28C%2B%2B%29
+
+Two key terms in the STL documentation are [*Concept* and *Model*].._[]
 
 A concept defines a (usually templated) type by
 
@@ -453,8 +455,6 @@ A model states for some type that it
   * which requires that concept.
 
 For a concept *C* and a model *M* the wording often is: *M* is a model of *C*.
-
-["Concept" and "Model"]: http://en.wikipedia.org/wiki/Concepts_%28C%2B%2B%29
 
 .F[:
 Concepts and models are related to what is provided by an *interface* and its
@@ -543,7 +543,7 @@ until the element of interest is found.
 template: plain
 header: ### Binary Trees
 
-Binary tree structures also spread out data structures over memory..[]
+Binary tree structures also spread out data structures over memory.._[]
 
 All the associative containers from C++98, i.e.
 
@@ -741,7 +741,7 @@ header: #### Sequential Access
 Sequential access is supported by all containers.
 
 As of C++98 the typical sequential access looked like follows, with `Container`
-replaced by a concrete instantiation of any STL container, or a type alias):._[]
+replaced by a concrete instantiation of any STL container, or a type alias:._[]
 ```
 Container c;
 for (Container::iterator it = c.begin(); it != c.end() ++it) …
@@ -761,9 +761,9 @@ for (auto it = std::begin(c); it != std::end(c) ++it) …
 for (auto it = std::cbegin(c); it != std::cend(c) ++it) … // non-modifying, C++14 only
 
 // with range-based loops and auto-typed placeholder:
-for (auto e : c) … // by-value access (non-modifying)
-for (auto &e : c) …
-for (const auto &e : c) … // non-modifying
+for (auto e : c) … // by-value access (modifications to `e` affect a copy only)
+for (auto &e : c) … // modifications to `e` affect container elements
+for (const auto &e : c) … // modifications to `e` prevented at compile-time
 ```
 ]
 
@@ -825,9 +825,9 @@ A client may expect a certain set of operations, which an iterator has to
 support, e.g.:
 
 * copy construction and assignment,
-* comparisons (at least for equal / unequal)
-* Increment (at least, often also decrement)
-* dereferencing._[]
+* comparisons (at least for equal / unequal),
+* increment (at least, sometimes decrement too), and
+* dereferencing.._[]
 
 .N[
 These operations deliberately are provided in the syntax of (equivalent)
@@ -1099,13 +1099,13 @@ instantiated for a concrete type) …._[]
 
 … is equivalent to the code shown below:
 ```
-for (auto it = std::begin(data); it != std::end(data); ++i) { // 1
+for (auto it = std::begin(data); it != std::end(data); ++it) { // 1
     auto e = *it; …
 }
-for (auto it = std::begin(data); it != std::end(data); ++i) { // 2
-    const &e = *it; …
+for (auto it = std::begin(data); it != std::end(data); ++it) { // 2
+    auto &e = *it; …
 }
-for (auto it = std::begin(data); it != std::end(data); ++i) { // 3
+for (auto it = std::begin(data); it != std::end(data); ++it) { // 3
     const auto &e = *it; …
 }
 ```

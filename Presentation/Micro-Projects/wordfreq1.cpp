@@ -1,5 +1,5 @@
 // Micro-Project: Word Frequency Analysis with `std::map`
-// #define TDD
+#define TDD
 
 #include <iostream>
 #include <map>
@@ -29,11 +29,12 @@ int main() {
         "beware the Jubjub bird and shun" "\n" 
         "the frumious Bandersnatch"       "\n" 
     );
-    std::ostringstream expect;
+    std::ostringstream received;
 //  ----------------------------
-    word_freq_map(send, expect);
+    word_freq_map(send, received);
 //  ----------------------------
-    assert(expect.str() ==
+//  std::cout << received.str();
+    assert(received.str() ==
         "Bandersnatch: 1"   "\n"
         "Jabberwock: 1"     "\n"
         "Jubjub: 1"         "\n"
