@@ -143,10 +143,16 @@ template: blank
 
 -------------------------------------------------------------------------------
 
-1. [Commonalities within Categories	](#category_commonalities)
-1. [STL Containers in Detail 		](#stl_container_details)
+* [Commonalities within Categories	](#category_commonalities)
+* [STL Containers in Detail 		](#stl_container_details)
 
 -------------------------------------------------------------------------------
+
+.center[**NOTE**]
+
+This part puts the focus on STL-Containers, as well as categorizing them by
+various aspects but also covering their individual specifics.
+
 
 ---
 template: plain
@@ -156,14 +162,12 @@ header: ## Commonalities within Categories
 -------------------------------------------------------------------------------
 
 * [Category: Sequence Containers](#sequence_containers)
-
   * [Sequential Access (only)](#sequential_access_only)
   * [Index-Based Random Access](#index_based_access)
 
 -------------------------------------------------------------------------------
 
 * [Category: Associative Containers](#associative_containers)
-
   * [Sub-Category: Ordered Associative Containers](#ordered_associative)
   * [Sub-Category: Unordered Associative Containers](#unordered_associative)
 
@@ -172,25 +176,18 @@ header: ## Commonalities within Categories
 * [Combining Container Classes	](#combining_container_classes)
 
 -------------------------------------------------------------------------------
-.center[
-Further Comparisons of Associative Containers
-]
+
+.center[Further Comparisons of Associative Containers]
 
 .pull-left[
-
 * [Sets versus Maps		](#sets_versus_maps)
 * [Commonalities of Sets	](#set_container_commonalities)
 * [Commonalities of Maps	](#map_container_commonalities)
-
--------------------------------------------------------------------------------
 ]
 .pull-right[
-
 * [Unique Values / Keys		](#nonmulti_container_commonalities)
 * [Non-Unique Values / Keys	](#multi_container_commonalities)
 * [Unique / Non-Unique Keys	](#nonmulti_vs_multi_maps)
-
--------------------------------------------------------------------------------
 ]
 
 ---
@@ -372,7 +369,7 @@ various container classes.
 
 ---
 template: plain
-name: ordered_associative
+name: associative_containers
 header: ### Category: Associative Containers
 
 Containers of this category are either [Sets or Maps](#sets_versus_maps)
@@ -486,7 +483,6 @@ A map consists of entries which are key-value pairs, with each part either a
 native type or a class instance.
 
 * New elements are usually added._[] with the
-
   * the `insert` member function, accepting as argument an `std:pair` of the
     key's and the value's type (resp. class) to be inserted, or
   * the `emplace` member function, accepting as argument an `std:pair` as
@@ -495,8 +491,8 @@ native type or a class instance.
     the key-value pair in place, or
   * an `emplace` member function using `std::piecewise_construct` and
     `std::forward_as_tuple` to create the key-value pair in place.
-
-* The value type of a map entry can not be `void` – use a set in this case!
+* The value type of a map entry can not be `void` – instead, use a
+  [Set](#set_container_commonalities)!
 
 .N[
 Inserting new key-value pairs with `emplace` is typically more performant as it
@@ -517,15 +513,14 @@ header: ### Sub-Category: Ordered Associative Containers
 Containers of this category use tree-based storage, hence:
 
 * They need an ordering relation for their elements or keys,
-
   * i.e. `operator<` for the element or key type,._[] or
-  * a user supplied function returning `true` if its first argument should
-    go first in sort order.
-
+  * a user supplied function returning `true` if  
+    its **first** argument is also **first** in sort order.
 * The ordering relation may impose any criteria, as long as it
-
-  * is not self-contradicting, i.e. from `a < b` must follow `!(b < a)`, and
-  * applies transitively, i.e. with `a < b` and `b < c` it follows that `a < c`.
+  * is not self-contradicting,  
+    i.e. from `a < b` must follow that `!(b < a)`, and
+  * applies transitively,  
+    i.e. with `a < b` and `b < c` must follow that `a < c`.
 
 On sequential traversal the elements are visited in ascending sort order,
 according to the ordering relation.
@@ -549,12 +544,10 @@ header: ### Sub-Category: Unordered Associative Containers
 Containers of this category use hash-based storage, hence need
 
 * a hash-function for the type of their elements (set) or keys (map)
-
 * to compare elements or keys for equality
-
   * with `operator==` for the element or key type, or
-  * a user supplied function returning `true` if both of its arguments
-    compare equal.
+  * a user supplied function returning `true` if  
+    both of its arguments **compare equal**.
 
 On sequential traversal the elements are visited in no particular order,
 except that elements with the same value or key are visited without any
@@ -582,7 +575,6 @@ single entry with no other entries comparing equal.
 
 * The return value of `insert` or `emplace` (including variants) holds two
   pieces of information:
-
   * member `first` is an iterator set to the position of the newly inserted or
     already existing element;
   * member `second` is a `bool` which is `true` if a new entry was added,
@@ -590,7 +582,6 @@ single entry with no other entries comparing equal.
 
 * To look-up an element with a given value or key, usually the member function
   `find` is used, which returns._[]
-
   * an iterator to the element if it exists,
   * or the end iterator of the container.
 
@@ -680,8 +671,8 @@ template: plain
 name: stl_container_details
 header: ### STL Containers and Adaptors in Detail
 
--------------------------------------------------------------
 .pull-left[
+-------------------------------------------------------------
 Sequence Containers:
 
 * [Class `std::array`](#class_std_array)
@@ -697,8 +688,10 @@ Container Adaptors:
 * [Class `std::queue`](#class_std_queue)
 * [Class `std::priority_queue`](#class_std_priority_queue)
 
+-------------------------------------------------------------
 ]
 .pull-right[
+-------------------------------------------------------------
 Ordered Associative Containers:
 
 * [Class `std::set`](#class_std_set)
@@ -714,11 +707,8 @@ Unordered Associative Containers:
 * [Class `std::array`](#class_std_array)
 * [Class `std::unordered_map`](#class_std_unordered_map)
 
-]
-
-<!-- -->
-
 -------------------------------------------------------------
+]
 
 ---
 template: plain
@@ -762,7 +752,7 @@ header: ##### `std::array` Characterisation
 | … may invalidate iterators        | not applicable |
 
 As memory layout is guaranteed to be the same, instances may also be used with
-C and (legacy) C++ APIs, expecting native (C-style) arrays.
+C and legacy C++ APIs, expecting native (C-style) arrays.
 
 * Member function `data()` returns a pointer to the first element._[] and
 * member function `size()` returns the number of elements.
@@ -775,7 +765,7 @@ exist if `T` overloaded `operator&`.
 ---
 template: plain
 name: std_array_considerations
-header: ##### `std::array` Special Considerations:
+header: ##### `std::array` Special Considerations
 
 * The element type must have a default constructor (either supplied or generated
   by the compiler).
@@ -784,7 +774,7 @@ header: ##### `std::array` Special Considerations:
 
   * either copies all elements in a loop (for lvalue references)
   * or moves all elements in a loop (for rvalue references if the elements
-    have a `nothrow` move assignment.
+    have a `noexcept` move assignment.
 
 * In an `std::move`-operation each element will be moved (if elements make a
   difference between move- and copy-assignment).
@@ -898,7 +888,7 @@ exist if `T` overloaded `operator&`.
 ---
 template: plain
 name: std_vector_considerations
-header: ##### `std::vector` Special Considerations:
+header: ##### `std::vector` Special Considerations
 
 * Space is usually allocated when necessary,
 
@@ -930,7 +920,7 @@ enlarged to about *2×N*.
 
 ---
 template: plain
-name: std_vector_characterisation
+name: std_vector_examples
 header: ##### `std::vector` Code Examples and Fragments
 
 Replacing `push_back` with `emplace_back` (available since C++11) may improve
@@ -1019,15 +1009,19 @@ header: ##### `std::deque` Characterisation
 | Dynamic growth …                  | yes                          |
 | … may invalidate iterators        | yes                          |
 
-Though memory layout comes in contiguous chunks and might have reasonable
-cache performance on sequential traversal, but the details are unspecified
-and hence even single chunks can not be (portably) used with C and (legacy)
+Memory layout comes in contiguous chunks and might have reasonable cache
+performance on sequential traversal, but details may vary substantially between
+implementations.
+
+.W[
+Hence even single chunks **can not** be (portably) used with C and legacy
 C++ APIs expecting native (C-style) arrays.
+]
 
 ---
 template: plain
 name: std_deque_considerations
-header: ##### `std::deque` Special Considerations:
+header: ##### `std::deque` Special Considerations
 
 * If insertions and removals are not required *at both ends*, but only random
   access by index, `std::vector` may be a more reasonable choice.
@@ -1043,7 +1037,7 @@ header: ##### `std::deque` Special Considerations:
 
 ---
 template: plain
-name: std_deque_characterisation
+name: std_deque_examples
 header: ##### `std::deque` Code Examples and Fragments
 
 The following example uses an `std::deque` to implement a ring-buffer with a
@@ -1083,6 +1077,12 @@ Provides a *singly linked list*
 * with efficient insertions and removals at its front,
 * and also in the middle, once a position is determined.._[]
 
+See the pages following for
+
+* [characterisation](#std_forward_list_characterisation),
+* [special considerations](#std_forward_list_considerations), and
+* some [example code fragments](#std_forward_list_examples).
+
 .F[:
 I.e. there must be an iterator set to it and the efficiency how that was
 obtained is not considered here.
@@ -1117,8 +1117,8 @@ if the necessity to locate the affected element(s) is not taken into
 account.
 
 .W[
-Locating elements in general has O(N) performance and very bad cache
-performance too.
+Locating elements in general has O(N) performance and bad cache performance
+too.
 ]
 
 .F[:
@@ -1130,7 +1130,7 @@ performance and is not directly supported.
 ---
 template: plain
 name: std_forward_list_considerations
-header: ##### `std::forward_list` Special Considerations:
+header: ##### `std::forward_list` Special Considerations
 
 * There are often better choices than `std::list`, *especially if linear
   traversal is a frequent usage pattern*.
@@ -1151,7 +1151,7 @@ header: ##### `std::forward_list` Special Considerations:
 
 ---
 template: plain
-name: std_forward_list_characterisation
+name: std_forward_list_examples
 header: ##### `std::forward_list` Code Examples and Fragments
 
 To allow the smallest possible overhead, an `std::forward_list ` does **not**
@@ -1256,7 +1256,7 @@ O(N) performance and is not directly supported.
 ---
 template: plain
 name: std_list_considerations
-header: ##### `std::list` Special Considerations:
+header: ##### `std::list` Special Considerations
 
 * There are often better choices than `std::list`, *especially if linear
   traversal is a frequent usage pattern*.
@@ -1369,8 +1369,7 @@ template: plain
 name: std_list_examples_3
 header: ##### `std::list` Code Examples and Fragments (3)
 
-To sort an `std::list` with its own `sort` member function, a comparison
-function may be named …
+To sort an `std::list` a comparison function may be handed over …
 
 .pull-left[
 ```
@@ -1405,8 +1404,8 @@ c.sort(IdCompare<MyData>());
 ```
 
 .F[:
-Actually a C++14 lambda because of `auto`-typed parameters. In C++11 lambda
-argument types need to be specified (as for `compare` left).
+Actually this is a C++14 lambda because of `auto`-typed parameters. In C++11
+lambda argument types need to be specified (as for `compare` on the left side).
 ]
 
 ---
@@ -1469,7 +1468,7 @@ sequence and/or not properly protected in a critical section.
 ---
 template: plain
 name: std_stack_considerations
-header: ##### `std::stack` Special Considerations:
+header: ##### `std::stack` Special Considerations
 
 * A `std::stack` effectively **reduces** the capabilities of the adapted
   container, by hiding some of its operations.._[]
@@ -1583,7 +1582,7 @@ sequence and/or not properly protected in a critical section.
 ---
 template: plain
 name: std_queue_considerations
-header: ##### `std::queue` Special Considerations:
+header: ##### `std::queue` Special Considerations
 
 * A `std::queue` effectively **reduces** the capabilities of the adapted
   container, by hiding some of its operations.
@@ -1636,7 +1635,7 @@ void flush_sentence(std::ostream &os) {
 
 ---
 template: plain
-name: std_queue_examples
+name: std_queue_examples_2
 header: ##### `std::queue` Code Examples and Fragments (2)
 
 Now the part that reads and temporarily stores word up to one than ends in a
@@ -1718,13 +1717,13 @@ sequence and/or not properly protected in a critical section.
 ---
 template: plain
 name: std_priority_queue_considerations
-header: ##### `std::priority_queue` Special Considerations:
+header: ##### `std::priority_queue` Special Considerations
 
 * A `std::priority_queue` mostly **reduces** the capabilities of the adapted
   container, but also adds new behavior by storing the content in prioritised
   order.
 
-* More precisely, it arranges the content so that it qualifies as a heap,_[]
+* More precisely, it arranges the content so that it qualifies as a heap,._[]
 
   * applying the ordering relation at insertion time, i.e.
   * the ordering **must not** depends on member data that might change for
@@ -1748,7 +1747,7 @@ header: ##### `std::priority_queue` Code Examples and Fragments
 A typical of a priority queue were sorting a `MyTask` class according to its
 priority.
 
-Assumming the following fragment …
+Assuming the following fragment …
 ```
 class MyTask {
     … //
@@ -1840,7 +1839,7 @@ possibly corrupt the tree structure.
 
 ---
 template: plain
-name: std_set_example
+name: std_set_examples
 header: ##### `std::set` Code Examples and Fragments
 
 The following code reads words, then prints them sorted without duplicates:
@@ -2070,6 +2069,12 @@ Provides a *key-value lookup table* that
 * with reasonably fast access by key,
 * and guaranteed ordering on sequential traversal.
 
+See the pages following for
+
+* [characterisation](#std_multimap_characterisation),
+* [special considerations](#std_multimap_considerations), and
+* some [example code fragments](#std_multimap_examples).
+
 .I[
 For more information on class `std::multimap` see
 http://en.cppreference.com/w/cpp/container/multimap
@@ -2126,7 +2131,7 @@ To modify the key of an object, erase and re-insert it with a new key.
 
 ---
 template: plain
-name: std_multimap_characterisation
+name: std_multimap_examples
 header: ##### `std::multimap` Code Examples and Fragments
 
 The following fragment reads lines starting with a word and a colon.
@@ -2218,7 +2223,7 @@ very possibly corrupt the hash structure.
 
 ---
 template: plain
-name: std_unordered_set_example
+name: std_unordered_set_examples
 header: ##### `std::unordered_set` Examples and Fragments (1)
 
 The following example combines `std::list` and `std::unordered_set`, providing
@@ -2247,7 +2252,7 @@ lookup.erase(ValueType( … , … ));
 
 ---
 template: plain
-name: std_unordered_set_example_2
+name: std_unordered_set_examples_2
 header: ##### `std::unordered_set` Examples and Fragments (2)
 
 For sequentially traversal in insertion order simply iterate over `sequence`:
@@ -2282,6 +2287,17 @@ Provides a *set-container* that
 * may hold multiple elements with a given value,
 * with fast (O(1)) access by element value,
 * but no guaranteed ordering on sequential traversal.._[]
+
+See the pages following for
+
+* [characterisation](#std_unordered_multiset_characterisation),
+* [special considerations](#std_unordered_multiset_considerations), and
+* some [example code fragments](#std_unordered_multiset_examples).
+
+.I[
+For more information on class `std::unordered_set` see
+http://en.cppreference.com/w/cpp/container/unordered_multiset
+]
 
 .F[:
 All elements with the same value are usually visited one after the other.
@@ -2335,7 +2351,7 @@ very possibly corrupt the hash structure.
 
 ---
 template: plain
-name: std_unordered_multiset_example
+name: std_unordered_multiset_examples
 header: ##### `std::unordered_multiset` Code Examples and Fragments
 
 The following is an alternative to analyse word frequency with a map.
@@ -2372,6 +2388,12 @@ Provides a *key-value lookup table* that
 * may hold an entry with a given key at most once,
 * with fast (O(1)) access by key,
 * but no guaranteed ordering on sequential traversal.
+
+See the pages following for
+
+* [characterisation](#std_unordered_map_characterisation),
+* [special considerations](#std_unordered_map_considerations), and
+* some [example code fragments](#std_unordered_map_examples).
 
 .I[
 For more information on class `std::unordered_map` see
@@ -2426,7 +2448,7 @@ very possibly corrupt the hash structure.
 
 ---
 template: plain
-name: std_unordered_map_example
+name: std_unordered_map_examples
 header: ##### `std::unordered_map` Examples and Fragments
 
 The following extends the principle of combining two containers to provide O(1)
@@ -2441,7 +2463,7 @@ Therefore `lookup` associates keys with iterators into `sequence`.
 
 First some type definitions and the two containers:
 ```
-using KType = …;   // or until C++11: typedef … KType;
+using KType = …; // or until C++11: typedef … KType;
 using VType = …; // or until C++11: typedef … VType;
 …
 std::list<VType> sequence;
@@ -2450,7 +2472,7 @@ std::unordered_multimap<KType, std::list<VType>::iterator>> lookup;
 
 ---
 template: plain
-name: std_unordered_map_example_2
+name: std_unordered_map_examples_2
 header: ##### `std::unordered_map` Examples and Fragments (2)
 
 Insertion needs to take place for both containers:._[]
@@ -2482,7 +2504,7 @@ to one:
 
 ---
 template: plain
-name: std_unordered_map_example_3
+name: std_unordered_map_examples_3
 header: ##### `std::unordered_map` Examples and Fragments (3)
 
 [Undefined Behaviour]: http://en.cppreference.com/w/cpp/language/ub
@@ -2525,6 +2547,12 @@ Provides a *key-value lookup table* that
 * may hold multiple entries with a given key,
 * with fast (O(1)) access by key,
 * but no guaranteed ordering on sequential traversal.
+
+See the pages following for
+
+* [characterisation](#std_unordered_multimap_characterisation),
+* [special considerations](#std_unordered_multimap_considerations), and
+* some [example code fragments](#std_unordered_multimap_examples).
 
 .I[
 For more information on class `std::unordered_map` see
@@ -2576,7 +2604,7 @@ To modify the key of an object, erase and re-insert it with a new key.
 
 ---
 template: plain
-name: std_unordered_multimap_example
+name: std_unordered_multimap_examples
 header: ##### `std::unordered_multimap` Examples and Fragments (1)
 
 The following extends the principle of combining two containers to provide O(1)
@@ -2600,7 +2628,7 @@ std::unordered_multimap<KType, std::list<VType>::iterator>> lookup;
 
 ---
 template: plain
-name: std_unordered_multimap_example_2
+name: std_unordered_multimap_examples_2
 header: ##### `std::unordered_multimap` Examples and Fragments (2)
 
 Insertion needs to take place for both containers:
@@ -2627,15 +2655,34 @@ auto const range = lookup.equal_range(KType( … ));
 
 ---
 template: plain
-header: ### Practically Working with Containers
+header: ## Summary
 
-For a practical approach to gather experience with STL containers visit the
-[Micro Projects](x2_day2.html#stl_container_micro_projects) focussing on STL
-containers.
+This part covered all the STL-Containers
+
+* in various detail by specifying
+  * their general characteristics
+  * special considerations
+    * including hints and
+    * pointing out pitfalls
+  * and commonalities within categories.
 
 .I[
 For more information on the STL Algorithm Library see:
 http://en.cppreference.com/w/cpp/algorithm
+]
+
+Also typical examples and code fragments were shown.._[]
+
+-------------------------------------------------------------------------------
+
+* What to do next?
+  * [Go back the Agenda](00_topics.html#agenda) …
+  * …  or [continue with next part](03_day2.html).
+
+.F[:
+For more exploration and gathering practical experience view the
+[Micro Projects](x2_day2.html#stl_container_micro_projects)
+on STL containers.
 ]
 
 

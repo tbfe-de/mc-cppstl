@@ -138,7 +138,7 @@ template: blank
 
   [C++ STL]: 00_topics.html#agenda
 
-# [C++ STL] – Odds and Ends
+# [C++ STL] Odds and Ends
 .center[(Day 2, Optional)]
 
 -------------------------------------------------------------------------------
@@ -148,6 +148,15 @@ template: blank
 * [STL-Quirks and Shortcomings		](#stl_quirks_and_shortcomings)
 
 -------------------------------------------------------------------------------
+
+.center[**NOTE**]
+
+This is an optional part with topics loosely connected to the main part of this
+course, which put the focus on C++ STL Containers and Algorithms.
+
+The topics in this part have been moved here as they are still of some interest
+– if time allows – but might distract from the general picture if covered in
+the main parts.
 
 ---
 template: plain
@@ -192,12 +201,10 @@ header: ### Boost.Bimap
   * look-up IP-Numbers for Host-Names, and
   * llok-up Host-Names for IP-Numbers.
 
-<!--
 .I[
 For more information on bidirectional maps see:
 http://www.boost.org/doc/libs/release/libs/bimap/doc/html/index.html
 ]
--->
 
 .F[:
 The technique used to implement that kind of bidirectional lookup has not been
@@ -224,20 +231,18 @@ header: ### Boost.MultiIndex
     * unique (or not)
   * …
 
-Note that the complexity of advanced template programming is mostly on the
-implementors side.
+From the client's perspective it rather is a [DSL] to be used in a
+"Cook-Book" style._[], probably extending the examples from the documentation.
 
-.N[
-From the client's perspective it rather appears as [DSL] that can be used in a
-"Cook-Book" style, following and extending the examples from the documentation.
-]
-
-<!--
 .I[
 For more information on multi-index tables see:
 http://www.boost.org/doc/libs/release/libs/multi_index/doc/index.html
 ]
--->
+
+.F[:
+I.e. that the complexity of advanced template programming is mostly on the
+implementer's side. (Though clarity of error messages may still be an issue.)
+]
 
 ---
 template: plain
@@ -248,8 +253,7 @@ header: ### Boost.PropertyTree
 [GoF-Composite]: https://en.wikipedia.org/wiki/Composite_pattern
 
 [Boost.PropertyTree] provides a data structure close to the [GoF-Composite]
-design pattern.
-
+design pattern.  
 It allows for
 
 * hierarchical nesting (in principally unlimited depths)
@@ -260,17 +264,13 @@ It allows for
     * supporting property (sub-) tree
     * besides atomic elements.
 
-.N[
-Property trees (from Boost) are especially if it is necessary to make the
-contained information persistent.
-]
+A typical application of property trees (from Boost) is to make the contained
+information persistent, e.g. to conserve a programs state between runs.
 
-<!--
 .I[
 For more information on property trees see:
 http://www.boost.org/doc/libs/release/doc/html/property_tree.html
 ]
--->
 
 ---
 template: plain
@@ -325,21 +325,17 @@ E.g. there are algorithms applicable to containers
 Since 2011 with each of the released ISO standards._[] parts of this library
 were included.
 
-.N[
-Therefore [Boost.Algorithm] also provides a way to get (some) C++11/C++14
-compatibility even if not provided by the compiler vendor.
-]
+So using [Boost.Algorithm] also is a way to get (some) C++11/C++14
+compatibility even if not (yet) provided by the compiler/library vendor.
 
 .F[:
 I.e. at the time of writing this, with C++11/14.
 ]
 
-<!--
 .I[
 For more information on extended algorithms see:
 http://www.boost.org/doc/libs/release/libs/algorithm/doc/html/index.html
 ]
--->
 
 ---
 template: plain
@@ -354,13 +350,12 @@ header: ### Boost.Iterator
    [Iterator Categories](04_day2.html/#iterator_categories) as originally
    specified with C++98.
 
-2. It helps to avoid much systematic code when implementing new iterators.
+2. It helps to avoid systematic code when implementing new iterators.
 
-<!--
 .I[
 For more information on extensions to iterators see:
 http://www.boost.org/doc/libs/release/libs/iterator/doc/index.html
--->
+]
 
 ---
 template: plain
@@ -380,16 +375,18 @@ header: ### Boost.Range
   * can be created in various ways.
 
 Of course, creating a range from two iterators is still possible – but it is not
-any more the **only** way, as it is with the classic STL API.
+any more the **only** way, as it is with the classic STL API.._[]
 
-.N[
-Even more flexibility is achieved with respect to ranges by utility operations,
-e.g. to directly feed the output from one algorithm as input to another one.._[]
+.I[
+For more information on extensions to iterators see:
+http://www.boost.org/doc/libs/release/libs/range/doc/html/index.html
 ]
 
 .F[:
-As for this operation also an overload is defined for `operator|`, those who are
-accustomed to [U*ix Pipeline]s._[] might be appealed also by the nifty look!
+Besides overloads making algorithms accept a range (created by a pair of
+iterators or another container that is to be processed in its entirety), there
+are overloads for `operator|` giving "chained algorithms" the nifty look&feel
+of [U*ix Pipeline]s.
 ]
 
 ---
@@ -475,38 +472,67 @@ to make a program harder to understand and more difficult to maintain.
 ---
 template: plain
 name: parallelizing_efficient
-header: ### Improving Performance - A Word to the Wise
+header: ### Improving Performance
 
 Before applying a performance improvement, be sure to understand the following:
 
-* If some part of a complex task contributes 20% to its total runtime,._[]
+* If some part of a complex task contributes 20% to its total runtime,
   * a performance improvement of 30% wins 6% total,
   * a performance improvement of 50% wins 10% total, and
   * **no** performance improvement will ever win more than 20%.
+
 * Other if some part of a complex task contributes 90% to its total runtime,
   * then … (you will surely be able to do the math yourself).
 
 .N[
-The total effect of performance improvements often are hard to predict.
+Especially on modern hardware he total effect of performance improvements
+s often extremely hard to predict.._[]
 ]
 
-Therefore:
+.F[:
+To put it in different words: Long gone are the days when you could determine
+assembler instructions issued by the compiler for a particular piece of code
+and count (and add) instruction cycle times … too strong is the influence of
+the various cache levels and in turn code locality (contrary to more or less
+random branching) is a big factor.
+]
+
+---
+template: plain
+name: parallelizing_efficient
+header: #### Measuring Performance - A Word to the Wise
+
+To determine runtime-performance of a particular piece of code
 
 * **Measure before you start** …  
 
-… and be sure to measure correctly and check the results for plausibility!
+* … and be sure to measure correctly by
+
+  * using actually relevant test-data,
+  * concentrate on determining the "bottle necks",
+  * and check the final conclusions for plausibility!
+
+.N[
+The improvements most worth-while often lurk in nested loops!._[]
+]
+
+* Even on the short run,
+  * `O(N²)` is already much worse as O(N×log(N)),
+  * which is in turn worse as `O(N)` or even `O(1)`.
+* But pay also attention to potentially sacrificing locality
+  * as provided by an `std::vector` or `std::array`, by switching to
+  * "clever" algorithms with a more random memory access pattern.
 
 .F[:
-This may or may not be much: if applied to a large application, **most** of
-its whole source code may not have that impact. When considering an algorithm
-in isolation it may not be much if it is the core of the algorithm, not some
-preparation, book-keeping, or handling of exceptional conditions.
+If you have a good understanding not only of the container data structures but
+also of searching, sorting and partitioning algorithms in provided in the C++
+Standard Library, you may already be able to achieve really big improvements.
 ]
 
 ---
 template: plain
 name: parallelizing_for_scalability
-header: ### Scalability to Multiple Cores
+header: #### Scalability to Multiple Cores
 
 [Packaged Task]: http://de.cppreference.com/w/cpp/thread/async
 
@@ -517,7 +543,7 @@ To increase performance it is contra-productive to split a CPU-bound task to
 more threads as there are physical cores.._[]
 ]
 
-When parallelizing with [Packed Tasks] in many cases
+When parallelizing with [Packaged Task]s in many cases
 
 * the decision in many cases is best left to the library (implementation),
 * assuming it has platform or operating system specific means to adapt actual
@@ -576,17 +602,40 @@ Purging an element with a given value
 
 * from an `std::list` and an `std:forward_list` is done with the member function
   `remove`, while
+
 * from any associative container it is done with with the member function `erase`.
 
 Sorting elements
 
 * of an `std::list` or an `std::forward_list` needs to be done with the member
   function `sort`
-  * which guarantees a [Stable Sort], while
+  * which **guarantee** a [Stable Sort], while
+
 * for any other sequential container it is done with the (non-member) algorithm
   `std::sort`,
-  * which **is not guaranteed to be a stable sort**, and
-  * as if this is desired `std::stable_sort` has to be used.
+template: plain
+name: summary
+header: ## Summary
+
+This part
+
+* first covered the various [Iterator categories](#stl_iterator_categories),
+
+* then compared [Call-Backs from Standard Algorithms](#stl_algorithm_interface)
+  in the form
+  * [Functors](#callback_with_lambda) (= classes with overloaded `operator()`),
+  * [Functions](#callback_with_function) (= classic C function pointers), and
+  * [Lambdas](#callback_with_lambda) (= function literals, as introduced with
+    C++11)
+
+-------------------------------------------------------------------------------
+
+What to do next?
+* [Go back to the Agenda](00_topics.html#agenda) and chose a specific part …
+  * …  or [continue with next part](04_day2.html),
+  * … or with the next (and last) page of this part.
+
+  * (if this is desired `std::stable_sort` has to be used).
 
 (More cases as those discussed above may exist.)
 

@@ -125,7 +125,7 @@ name: frontmatter
 ]
 
 .copyright[
-**Copyright © 2015**  
+**Copyright © 2019**  
 **Martin Weitzel**
 
 ![CC BY-SA](cc_by-sa.svg)  
@@ -143,53 +143,51 @@ class: agenda
 name: agenda
 header: ## Agenda
 
-Topics (including Optional Parts._[]) – Covering two Days, Morning and Afternoon
-
-------------------------------------------------------------------------------
+Mandatory topics – covering two days, morning and afternoon – are:
 
 .pull-left[
+-------------------------------------------------------------------------------
 **FIRST DAY**
 
 * [Fundamental Architecture				](01_day1.html)
 * [STL Containers					](02_day1.html)
-* [Considering Runtime Performance and Memory Footprint	](x1_day1.html)
-
+-------------------------------------------------------------------------------
 ]
+
 .pull-right[
+-------------------------------------------------------------------------------
 **SECOND DAY**
 
 * [Iterators and Algorithms				](03_day2.html)
 * [Extending the STL					](04_day2.html)
-* [Odds and Ends 					](x2_day2.html)
-
+-------------------------------------------------------------------------------
 ]
 
-<!-- -->
-
-------------------------------------------------------------------------------
-
-Optional Parts (third topic each day) may be integrated with practical exercises
-on the first day, chosen from:
-
-------------------------------------------------------------------------------
+Optional Parts on both days may be be chosen from:._[]
 
 .pull-left[
+-------------------------------------------------------------------------------
+* [Considering Memory Footprint …
+  and Runtime Performance				](x1_day1.html)
 
-* [A Selection of Micro-Projects	](microprojects.html)
-
+-------------------------------------------------------------------------------
 ]
 .pull-right[
-
-* [With Solutions			](Micro-Projects)
-
+-------------------------------------------------------------------------------
+* [Various Odds and Ends 				](x2_day2.html)
+* [A Set of Micro-Projects				](microprojects.html)
+-------------------------------------------------------------------------------
 ]
 
-<!-- -->
+In the 3-day version of this course all of the above is covered in a relaxed
+time frame giving substantially more room for practical exercises and
+presentation of selected solutions.
 
-------------------------------------------------------------------------------
-
-On the second day solutions to the above, explained as demo-programs, may
-partially replace individual practical exercises.
+.F[:
+In the 2-day version on the second day some selected solutions may rather be
+explained as demo-programs and partially replace individual practical
+exercises ending the day.
+]
 
 ---
 
@@ -202,15 +200,17 @@ header: ## Online Version of this Presentation
 For all forms of redistribution a [Creative Commons] license applies:
 
 .I[[
-**(CC) BY-SA**:  
+**(CC) BY-SA**: Attribution (Don't claim Authorship) – Share Alike    
 Namensnennung und Weitergabe unter gleichen Bedingungen
 ](http://creativecommons.org/licenses/by-sa/3.0/de/)]
 
-You may download the document from: http://github.com/tbfe-de/mc-cppstl
+(Ask the trainer to learn the location on the internet from which you can
+download the documents.)
 
 .W[
 The content was produced and checked with adequate care.
-The author may not be held liable for any errors or inaccuracies still contained.
+The author may not be held liable for any errors or inaccuracies still
+contained.
 ]
 
 You are welcome to point out errors or propose general improvements.
@@ -265,12 +265,15 @@ You may want to follow links when viewing this presentation by **clicking with t
 CTRL-key held** down, what will open the target document in a separate browser tab.
 ]
 
-**And because the German Law seems to require it here is the usual disclaimer:**
+**Because in some countries the law may require it, here is the necessary
+cautionary disclaimer:**
 
+.N.center[
 YOU UNDERSTAND AND AGREE THAT UNDER NO CIRCUMSTANCES NEITHER THE AUTHOR OF THIS
 DOCUMENT NOR THE COMPANY OR ANY ONE ELSE WHO MADE IT ACCESSIBLE TO YOU CAN BE
-HELD RESPONSIBLE FOR THE CONTENT OF A FOREIGN SITE THAT IS DISPLAYED AFTER
-CLICKING A LINK PROVIDED HERE.
+HELD RESPONSIBLE FOR THE CONTENT OF A THIRD PARTY'S INTERNET SITE DISPLAYED
+WHEN CLICKING ON A LINK PROVIDED IN THIS SET OF DOCUMENTS.
+]
 
 ---
 template: plain
@@ -406,7 +409,20 @@ browser.
 
 ---
 template: plain
-name: annotations
+name: summary
+header: ## Summary
+
+This document gave some
+* some [General Information](#online_version) on this course.
+
+-------------------------------------------------------------------------------
+
+What to do next?
+* [Go back to the Agenda](#agenda) and chose a specific part …
+* … or continue with the next (and final) page of this part.
+
+---
+template: plain
 header: ## A Hidden Jewel …
 
 [Algorithm Library]: http://en.cppreference.com/w/cpp/algorithm
@@ -425,6 +441,8 @@ late-comers – the following lecture by *Sean Parent* may be of interest:
 https://www.youtube.com/watch?v=IzNtM038JuI
 ]
 
+<!-- -->
+
 [Minute 04:16]: https://www.youtube.com/watch?feature=player_detailpage&v=IzNtM038JuI#t=256
 [Minute 12:30]: https://www.youtube.com/watch?feature=player_detailpage&v=IzNtM038JuI#t=750
 
@@ -434,7 +452,7 @@ If there are at least 10…15 minutes to bridge, a good starting point is at
 .F[:
 If there time for that kind of intermezzo right now but you want to see later
 on your own how a really complicated code gets simplified by using appropriate
-STL-algorithms, you may view from [Minute 4:16]. Or go right to the beginning
+STL-algorithms, you may view from [Minute 04:16]. Or go right to the beginning
 and watch the introduction too – the host is [Alexander Stepanov], who designed
 the STL 20 years ago together with [David Musser].
 ]

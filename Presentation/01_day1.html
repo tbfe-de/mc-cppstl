@@ -143,13 +143,18 @@ template: blank
 
 -------------------------------------------------------------------------------
 
-1. [Architectural Overview		](#architectural_overview)
-1. [Abstract Specification 		](#abstract_specification)
-1. [Common Data Structures 		](#common_data_structures)
-1. [Understanding Iterators		](#understanding_iterators)
-1. ["Big-O" Algorithmic Complexity 	](#big_o_algorithmic_complexity)
+* [Architectural Overview		](#architectural_overview)
+* [Abstract Specification 		](#abstract_specification)
+* [Common Data Structures 		](#common_data_structures)
+* [Understanding Iterators		](#understanding_iterators)
+* ["Big-O" Algorithmic Complexity 	](#big_o_algorithmic_complexity)
 
 -------------------------------------------------------------------------------
+
+.center[**NOTE**]
+
+This part mainly intends to give an overview – the *Big Picture* – with
+many of the details covered in more depth in subsequent parts.
 
 
 ---
@@ -231,7 +236,7 @@ header file `<algorithm>)`
 
 * (about) 30 related groups (or families._[]),
 
-which may be considered augmented by the header `<numeric> contributing
+which may be considered augmented by the header `<numeric>` contributing
 
 * another 5 algorithms.
 
@@ -295,7 +300,7 @@ header: ## Abstract Specification
 One of the most distinguishing marks of the STL its strong preference for
 abstract specifications.
 
-Originally and formally until today, the STL documentation disclosed few abouts
+Originally and formally until today, the STL documentation disclosed few about
 its implementation,._[] nor with respect to data structures, neither for details
 on the algorithms used.
 
@@ -349,11 +354,11 @@ header: ### Breaches of Contract
 With respect to the STL there are two substantially different ways to breach
 the contract and use the components in unsupported ways:
 
-1. At compile time:
+1. [At compile time](#compile_time_errors):
    * Currently only sometimes a concise error description is the result.
    * More often it causes myriads of messages, difficult to decipher.._[]
 
-2. At run time:
+2. [At run time](#run_time_errors):
    * In this case – at least principally – "all bets are off", but
    * quality implementation sometimes add checking code during *Debug Builds* or
      may allow to enable selected STL safety checks for *Release Builds*.
@@ -372,6 +377,7 @@ At least for the "un-enlightened" … (though the situation may improve once
 
 ---
 template: plain
+name: compile_time_errors
 header: #### Compile Time Errors with STL Components
 
 Compile time errors usually result from an insufficient understanding which set
@@ -402,6 +408,7 @@ change you made triggered the problem.
 
 ---
 template: plain
+name: run_time_errors
 header: #### Undefined Behaviour of STL Components
 
 To allow – **not to mandate(!)** – highly efficient implementations, the C++
@@ -434,12 +441,12 @@ too many users to migrate away, who for which the price is not acceptable
 
 ---
 template: plain
-name: abstract_specification
-header: #### Concepts and Models
+name: concepts_and_models
+header: ### Concepts and Models
 
 [*Concept* and *Model*]: http://en.wikipedia.org/wiki/Concepts_%28C%2B%2B%29
 
-Two key terms in the STL documentation are [*Concept* and *Model*].._[]
+The two key terms in the STL documentation are [*Concept* and *Model*].._[]
 
 A concept defines a (usually templated) type by
 
@@ -454,7 +461,9 @@ A model states for some type that it
   * to instantiate a templated type,
   * which requires that concept.
 
-For a concept *C* and a model *M* the wording often is: *M* is a model of *C*.
+For a concept *C* and a model *M* the typical wording is:
+
+* *M* **is a model of** *C*.
 
 .F[:
 Concepts and models are related to what is provided by an *interface* and its
@@ -508,7 +517,7 @@ store adjacent elements (chars) in adjacent memory, and
 
 * `std::deque`
 
-stores splits the whole data in smaller chunks, each of which is stored in
+splits the whole data in smaller chunks, each of which is stored in
 adjacent memory.
 
 .F[:
@@ -574,6 +583,8 @@ Only for sets the element value is compared, for maps it is the key value.
 template: plain
 header: ### Hash-Tables
 
+[Hash-Table]: http://en.wikipedia.org/wiki/Hash_table
+
 The unordered counterparts to sets and maps, added in C++11, i.e.
 
 * `std::unordered_set`,
@@ -581,14 +592,19 @@ The unordered counterparts to sets and maps, added in C++11, i.e.
 * `std::unordered_map`, and
 * `std::unordered_multimap`
 
-are based on [Hash-Table]s and therefore are a mix of "adjacent" (for looking up
-keys) with a tendency to "spread-out" (in case of overruns).
+are based on [Hash-Table]s and therefore are a mix of
 
-[Hash-Table]: http://en.wikipedia.org/wiki/Hash_table
+* *adjacent memory* (for key-lookup based on their hash-value)
+
+* and a tendency to *spread-out data* (in case of hash-duplicates).
+
+Essential for efficient key-based ("O(1)") access is a good hash function.
 
 .N[
-Sequentially accessing any of these will result in poor cache performance on
-modern hardware architectures.
+As typical STL-implementations store the per-element data in separate linked
+lists per hash bucket, poor cache performance may result on modern hardware
+architectures and sequential access may be slowed down, especially in
+comparison an `std::array`.
 ]
 
 ---
@@ -812,7 +828,7 @@ std::string k;
 
 .F[:
 Another way to access an element for a given key is to obtain an iterator to it.
-The non-existence then can be tested by comparison th the end-iterator of the
+The non-existence then can be tested by comparison with the end-iterator of the
 given container.
 ]
 
@@ -1127,6 +1143,31 @@ Info-Graphic …
 
 … and feel free to ask any question you want to ask.
 
+---
+template: plain
+header: ## Summary
+
+This part's goal was to give an overview to the STL, starting with
+
+* The [Architecture](#architectural_overview), centering on
+  * [Containers](#container_dimension)
+    – to store and organizer data items) and
+  * [Algorithms](#algorithm_dimension)
+    – to process such data collections
+
+* emphasizing the Role of [Iterators](#understanding_iterators)
+  * providing the necessary "glue" between the former
+  * a generalising mechanism for access and traversal
+
+* On the way some key terms were introduced, like
+  * [Concepts and Models](#concepts_and_models)
+  * the ["Big-O"-Notation](#big_o_algorithmic_complexity)
+
+-------------------------------------------------------------------------------
+
+* What to do next?
+  * [Go back the Agenda](00_topics.html#agenda) …
+  * …  or [continue with next part](02_day1.html).
 
 </textarea>
 <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->

@@ -2112,9 +2112,9 @@ while (more_work_to_do(remaining_pathway_length)) {
     nth_element(magazine.begin(), from, magazine.end());
     move(from, magazine.end(), front_inserter(dreirad_bed));
     magazine.erase(from, magazine.end());
-    for (auto &current_plank : dreirad_bed) {
-        remaining_pathway_length -= current_plank.getLength();
-        put_onto_muddy_pathway(std::move(current_plank));
+    for (auto &curr_plank : dreirad_bed) {
+        remaining_pathway_length -= curr_plank.getLength();
+        put_onto_muddy_pathway(std::move(curr_plank));
         if (not more_work_to_do(remaining_pathway_length)) break;
     }
 }
@@ -2258,21 +2258,17 @@ What performance would you expect, for `std::binary_search`?
 
 What performance would you expect, for `std::find` (linear search)?
 
---------------------------------------------------------------------------------
-
 [ForwardIterator]: http://en.cppreference.com/w/cpp/concept/ForwardIterator
 [RandomAccessIterator]: http://en.cppreference.com/w/cpp/concept/RandomAccessIterator
 
 From which size a binary search in a container with [ForwardIterator]s starts to
 beat the linear search in a container with [RandomAccessIterator]s?
 
---------------------------------------------------------------------------------
-
 Come up with a way to control comparison cost._[] and demonstrate how
 – depending on the comparison cost dominance – the "cross-over" point from
 *O(log<sub>2</sub>(N))* to *O(N)* shifts in case of a linked list
 
-.F[
+.F[:
 Hint, if you need one: the comparison costs for `std::string`-s increase with
 the length of a common beginning. (But also understand that for the equality
 comparison shortcuts are possible!)
@@ -2382,11 +2378,7 @@ int data[] = { 0, 8, 1, 5 };
 ```
 ]
 
-.center[Any idea?._[]]
-
-.F[:
-Change `std::string` to `const char *` and things might even get more obscure …
-]
+.center[Any idea?]
 
 ---
 template: plain
