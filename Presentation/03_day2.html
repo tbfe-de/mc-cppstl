@@ -892,8 +892,8 @@ return.
 
 ##### Writing To a Stream With `std::ostream_iterator`:
 
-The next example copies elements from an `std::forward_list` to standard output
-with a semicolon (`;`) appended after each value:
+The next example inserts all elements from of `std::forward_list` to standard
+output with a semicolon (`;`) appended after each value:
 ```
 std::forward_list<long> fli;
 …
@@ -903,17 +903,21 @@ std::copy(fli.begin(), fli.end(),
 ```
 
 .N[
-As the class std::ostream_iterator forwards to std::operator<< the code works
-not only for every builtin types but also for class providing that operator with
-an object of class `std::ostream`as left hand side operand.
+Generating output that way requires the elements of the `std::forward_list` are
+convertible to `long` – a no-op in this case.
 ]
+
+In general, as stream insertion uses `std::operator<<`, any type will work for
+which that operator is defined with a right-hand operand of the type specified
+as template argument.
 
 ---
 template: plain
-header: ##### Aus Stream lesen mit `std::istream_iterator`:
+header: ##### Reading From a Stream With `std::istream_iterator`:
 
-Das folgende Beispiel._[] kopiert Worte von der Standardeingabe bis EOF in eine
-`std::forward_list`:
+The next example._[] extracts values of type `std::string` from standard input,
+pushing each to the front of an `std::forward_list` so the last comes first if
+later traversed with an (ordinary forward) iterator:._[]
 ```
 std::forward_list<std::string> fli;
 copy(std::istream_iterator<std::string>(std::cin),
@@ -921,72 +925,94 @@ copy(std::istream_iterator<std::string>(std::cin),
      std::front_inserter(fli)
 );
 ```
+
+.N[
+Filling the `std::forward_list` that way requires what is extracted via the
+`std::istream_iterator` is convertible to `std::string` – a no-op in this case.
+]
+
+In general, as stream extraction uses `std::operator>>`, any type will work for
+which that operator is defined with a right-hand operand of the type specified
+as template argument.
+
+
 .F[:
-Zumeist ist es zwar ausreichend, das obige Beispiel mehr oder weniger
-"kochrezeptartig" und ggf. sinngemäß verändert anzuwenden, dennoch taucht häufig
-die Frage auf, wie es denn "hinter den Kulissen" funktioniert. Daher als Hinweis
-das folgende:  
-Offensichtlich gibt es zwei Konstruktoren, von denen einer ein
-`std::istream`-Objekt als Argument erhält. Ein auf diese Weise erzeugter
-Input-Stream-Iterator liefert im Vergleich mit einem per Default-Konstruktor
-erzeugten Gegenstück zunächst `false`.  
-Die Operationen `*` und `++` werden auf eine Eingabe mit `operator>>`
-abgebildet, wobei die eingelesene Variable genau den Typ hat, der zur
-Instanziierung der Template verwendet wurde. Sobald der Eingabestrom den
-*good*-Zustand verlässt, liefert der damit verbundene Istream-Iterator beim
-erneuten Vergleich mit dem per Default-Konstruktor erstellten `true`.
+You may well use the above example in a "cookbook style", simply changing what
+needs obviously to be changed. But for those who want some deeper understanding
+here are some hints:  
+The "range" in the stream from which the input is extracted is specified via
+two constructors of the class `std::istream_iterator` returning temporary
+objects. The first has an argument which is an `std::istream` to be used as
+data source. The second has no argument – i.e. the *default constructor* of
+that class.  
+Comparing these two object for equality determines when the range ends. So in
+some way the operations `*` and `++` are forwarded to `operator>>`. For all
+standard algorithms it is guaranteed that the use adheres to the requirements
+of an [Input Iterator](input_iterators) and within these restrictions comparing
+the two objects for equality returns `true` as long as there is more input
+available.
 ]
 
 ---
 template: plain
-header: #### Zeiger als Iteratoren
+header: #### Native Pointers As Iterators
 
-Da die für Iteratoren implementierten Operationen syntaktisch wie semantisch
-denen für Zeiger entsprechen, können auch klassische Arrays bearbeitet werden.
+As syntactically the operations required from iterators are provided by native
+pointers and semantically these operations adhere to the requirements for
+[Random Access Iterators](#random_access_iterators)._[], all STL algorithms
+can be applied to native arrays too.
 
-##### Kopieren AUS klassischem Array
+##### Copying From a Native Array
 
-Mit einem klassischen Array
+Assuming a native array `data` as data source
 ```
 double data[100]; std::size_t ndata{0};
 ```
-
-und der Annahme, dass nach dessen Befüllen die ersten `ndata` Einträge
-tatsächlich gültige Werte enthalten:
+and that after filling in some data the first `ndata` elements are valid:
 ```
 std::copy(&data[0], &data[ndata], … );
 ```
-
-Oder:
+OR:
 ```
 std::copy(data, data + ndata, … );
 ```
 
----
-template: plain
-header: ##### Kopieren IN klassisches Array
-
-Mit einem klassischen Array als Ziel der Kopie:
-```
-const auto endp = copy( … , … , &data[0]);
-```
-
-Umrechnung des Füllstatus-Iterators in Anzahl gültiger Elemente:
-```
-ndata = endp - data; // oder: ... endp - &data[0]
-```
-
-Hier findet allerdings keinerlei Überlaufkontrolle statt!
-
-.W[
-Enthält der ausgelesene Container mehr Elemente als `data` aufnehmen kann,
-könnten **dahinter** (= an größeren Adressen im Speicher) liegende Variablen
-überschrieben werden.
+.F[:
+Note that a native pointer is allowed to point to the memory address **after**
+the last element of a native array, only **dereferencing** a pointer to that
+address is undefined behavior.
 ]
 
 ---
 template: plain
-header: #### Kopieren zwischen verschiedenen Container-Typen
+header: ##### Copying Into a Native Array
+
+Assuming a native array `data` as data sink:._[]
+```
+const auto endp = std::copy( … , … , &data[0]);
+```
+
+To convert the filling indicator into a count:
+```
+ndata = endp - data; // or: ... endp - &data[0]
+```
+
+.F[:
+As there isn't any overflow control in that example the algorithm `std::copy`
+is not a good choice if the amount of data copied into a native array cannot
+be determined in advance. For a clean solution limit control may be provided
+with a small helper class wrapping source iterators. But to the knowledge of
+the author there is no standard class provided that could serve that purpose.
+]
+
+.W[
+If the data source for produces more elements as fit in `data` memory directly
+after the native array will be overwritten.
+]
+
+---
+template: plain
+header: #### Copying Between Different Container Types
 
 ```
 using namespace std;
@@ -1013,56 +1039,55 @@ copy(s.begin(), s.end(), ostream_iterator<int>(cout, "; "));
 ```
 
 .F[:
-Im Rahmen der Zuweisungskompatibilität erfolgt beim Kopieren zwischen
-unterschiedlichen Containern auch die Typ-Konvertierung des Elementtyps.
+As long as there is assignment compatibility also the element type may differ
+when copying between different containers.
 ]
 
 ---
 template: plain
-header: #### Kopieren zwischen gleichartigen Container-Typen
+header: #### Copying Between Identical Container Types
 
 [PODs]: http://www.cplusplus.com/reference/type_traits/is_pod/
 
-Obwohl mit dem `std::copy`-Algorithmus *1:1-Kopien* gleichartiger Container
-problemlos möglich sind, wird hier eine Zuweisung eher sinnvoll sein, also:
+While the `std::copy` algorithm may well be used to make a "1:1" copy of
+containers of identical type, direct assignment makes more sense:
 ```
 std::vector<MyClass> v1, v2;
 …
 v2 = v1;
 ```
-Und nicht (evtl. nach einem `v2.clear()`):
+Instead of (if necessary after `v2.clear()`):
 ```
 std::copy(v1.begin(), v1.end(), std::back_inserter(v2));
 ```
 .N[
-Insbesondere kann der spezifisch für eine Container-Klasse definierte
-Zuweisungs-Operator spezielle Eigenschaften der jeweiligen Abspeicherungsart
-berücksichtigen.._[]
+Container specific assignments may – and will – utilize container specific
+properties of the data structure used for storage **including** the element
+type.._[]
 ]
 
 .F[:
-Im Gegensatz zum generischen Kopieren werden dabei oft [PODs] (plain old data
-types) als Elementtyp erkannt und dann eine unterschiedliche Spezialisierung
-verwendet, welche die Operation in ein `std::memmove` oder `std::memcpy`
-überführt.
+E.g. contrary to generic copying contiguous data storage of [PODs] may be
+recognized, finally falling back to `std::memmove` or `std::memcpy` … (which
+then may even be directly supported by specific hardware).
 ]
 
 ---
 template: plain
-header: #### Einige typische Beispiele für Algorithmen
+header: #### Some Typical Algorithms By Example
 
-Die folgenden Programmfragmente gehen aus von einem STL-Container
+The following code fragments assume an STL container
 ```
 std::vector<int> v;
 ```
-der anschließend mit Datenwerten gefüllt wurde.
+Which has been filled with data values.
 
-##### Zählen der Elemente mit dem Wert 542
+##### Counting All Elements Equal To 542
 ```
 auto n = std::count(v.begin(), v.end(), 542);
 ```
 
-##### Suchen des ersten Elements mit dem Wert 542
+##### Locating the First Element Equal To 542
 
 ```
 const auto f = std::find(v.begin(), v.end(), 542);
@@ -1076,44 +1101,45 @@ else {
 
 ---
 template: plain
-header: ##### Löschen aller Elemente mit dem Wert 542
+header: ##### Removing All Elements Equal To 542
 
 ```
 const auto end = std::remove(v.begin(), v.end(), 542);
 ```
 
-Die Variable `end` enthält nun einen Iterator, der das neue (logische) Ende des
-(von der Anzahl der Elemente gesehen größeren) Containers bezeichnet.
+Now the variable `end` holds an iterator that determines the new (logical) end.
+If removals took place the original container will (still) be larger, but any
+excess elements from hat point to the end should be ignored.
+
+If the container size can be changed:
 ```
-// nicht mehr zum Inhalt zu zaehlende  Elemente loeschen
+// physically remove excess elements
 v.erase(end, v.end());
 ```
 
 .N[
-Code wie der gerade gezeigte ist vor allem in generischen Templates zweckmäßig,
-bei denen die eigentliche Container-Klasse – also der exakte Datentyp von `v` –
-möglichst flexibel bleiben soll.
+Code like shown above especially makes sense in generic templates, where the
+actual container – i.e. the type of `v` – shall be kept flexible.
 ]
 
-Wird ein bestimmter, typischer und auch häufiger Anwendungsfall von solchen
-Templates deutlich sub-optimal behandelt, kann ggf. eine entsprechende
-Spezialisierung erfolgen.
+If a certain, typical use case of such templates will lead to sub-optimal code
+which finally has an impact on run time performance, specializations for that
+type may still be added.
 
 ---
 template: plain
 name: generic_vs_specific
-header: ##### STL Algorithmen vs. spezifische Member-Funktionen
+header: ##### STL Algorithm vs. Specific Member Functions
 
-Steht die Klasse des Containers fest, gibt es alternativ zum generischen
-Algorithmen eventuell auch spezifische Member-Funktionen. Diese sind dann meist
-einacher und auch effizienter.
+When the class of a container is known there are alternatives to generic
+algorithms, often in form of member functions. Such are usually simpler to use
+and more efficient.
 
-Beispielsweise muss nach der Anwendung **generischer** löschender Algorithmen
-– wie zuvor gerade gezeigt – ein Container mit dynamischer Größe in der Regel
-noch auf den tasächlichen Inhalt reduziert werden.
+As it has been shown after using the **generic** algorithm to remove elements
+resizable contaners must still be shrunken to their actual content.
 
 .pull-left[
-Unübersichtlich (und in der Regel auch weniger ineffizient):
+Less readable and often less efficient too:
 ```
 v.erase(
     std::remove(v.begin(),
@@ -1122,18 +1148,17 @@ v.erase(
 ```
 ]
 .pull-right[
-Leichter verständlich und stets effizient ist der folgende Code:
+Better readable and always as efficient as possible:
 ```
 v.remove(542);
 ```
 ]
 
-In beiden Fällen ist zwar der Container-Typ eingeschränkt, aber es besteht
-Flexibilität in Bezug auf den *Daten*-Typ der Container-*Elemente*.._[]
+In both cases the container type is not any longer fully generic but of course
+the *data type* of that container still is.._[]
 
 .F[:
-Ausgeschlossen ist hier z.B. die Verwendung eines `std::array`, da dieses eine
-zur Compile-Zeit festgelegte Größe hat, die zur Laufzeit unveränderlich ist.
+Excluded now is e.g. an `std::array` as it cannot be resized at run time.
 ]
 
 ---
@@ -1183,59 +1208,60 @@ header: ## Callbacks from Algorithms
 
 ---------------------------------------------------------------------------------
 
-* [Generelle Möglichkeiten für Callbacks		](#callbacks_general)
-* [Callback mit Funktor 				](#callback_with_functor)
-* [Callback mit Lambda					](#callback_with_lambda)
-* [C++14 Erweiterungen für Lambdas			](#cpp14_lambda_extensions)
-* [Prädikate für Algorithmen (generell)			](#predicates_general)
-* [Prädikate für Algorithmen (Beispielserie)		](#predicate_examples))
-* [Algorithmen vs. spezifische Member-Funktionen	](#generic_vs_specific)
+* [Callbacks In General					](#callbacks_general)
+* [Callback with Functor 				](#callback_with_functor)
+* [Callback with Lambda					](#callback_with_lambda)
+* [C++14 Extensions for Lambdas				](#cpp14_lambda_extensions)
+* [Predicates For Algorithms – General Aspects		](#predicates_general)
+* [Predicates For Algorithms by Example			](#predicate_examples))
+* [Algorithms vs. Specific Member Functions		](#generic_vs_specific)
 
 ---------------------------------------------------------------------------------
 
 ---
 template: plain
 name: callbacks_general
-header: ### Generelle Möglichkeiten für Callbacks 
+header: ### Callbacks In General
 
-Prinzipiell sind Algorithmen zwar Code aus einer Bibliothek, häufig enthalten diese
-aber "*Callbacks*" an die Applikation.
+By their nature algorithms are library code, but many need to do "call back"
+into the application.
 
-Dafür existieren drei Möglichkeiten:
+This is possible in three ways:
 
-* Klassische (C-) Funktionen und Übergabe als Funktionszeiger:
-  * hierbei wird nur Name der Funktion angegeben;
-  * die anschließenden runden Klammern entfallen.
+* Classic (C-) function handed over as function pointer:
+  * specified is only the name of the function;
+  * there are no parentheses enclosing arguments.
 
-* Objekte mit überladener `operator()` Member-Funktion – sogenannte Funktoren:
-  * oft wird eine Objekt-Instanz direkt bei der Argumentübergabe erzeugt;
-  * in diesem Fall enthalten nachfolgenden runde Klammern
-    * die Argumentliste Konstruktors oder
-    * bleiben leer (= Default Konstruktor)
+* Objects may overload their `operator()` member function – so called functors:
+  * often a just a temporary object instance will be created by just using the
+    class name;
+  * in this case parentheses or braces may follow,
+    * specifying constructor arguments;
+    * if empty that means the default constructor is to be used.
 
 * C++11 Lambdas
 
 ---
 template: plain
 name: callback_with_functor
-header: ### Callback mit Funktor
+header: ### Callback With Functor
 
-Ein typisches Beispiel ist der Algorithmus `std::for_each`, der intern eine
-Schleife ausführt in der alle Elemente eines Containers dem *Call-Back* als
-Argument übergeben werden.
+A typical example is the algorithm `std::for_each`, running an internal loop
+over all the elements in a container. The code to process each element is
+supplied via a *call back* as third argument.
 
-Zunächst ein Funktor (der alle Argumente einfach nur ausibt):
+First a functor (that just prints all the elements after a colon):
 ```
 struct PrintWords { // in a struct everything is public by default
     void operator()(const std::string &e) {
-        cout << ": " << e << "\n";
+        cout << e << "\n";
     }
 };
 ```
 
 .N[
-Hinter dem **Klassennamen** des Funktors **stehen dann runde oder geschweifte
-Klammern**, um ein (temporäres) Objekt zu erzeugen.
+After the **class name** of the functor **follow round parentheses or curly
+brackets, to instantiate a temporary. object (bound as argument).._[]
 ]
 
 ```
@@ -1246,24 +1272,24 @@ std::for_each(v.begin(), v.end(), PrintWords{}); // since C++11 also
 ```
 
 .F[:
-Statt eines temporären Objekts kann natürlich auch vorab ein Objekt angelegt
-und dieses dann (ohne folgende Klammern!) übergeben werden.
+Instead of a temporary object also a named object may be instantiated which
+then would be handed over **without** any parentheses or braces following it.
 ]
 
 ---
 template: plain
 name: callback_with_function
-header: #### Vergleich mit Funktion
+header: #### Comparison With Function
 
-Mit einer Funktion sieht das Beispiel so aus:.[]
+Using a function instead of a functor make the example look like this:._[]
 ```
 void print_words(const std::string &e) {
-    cout << ": " << e << "\n";
+    cout << e << "\n";
 };
 ```
 .N[
-Hier sind **keine** Klammern zu schreiben, da der **Name** der Funktion
-weitergegeben wird – ihr Aufruf erfolgt erst im Rahmen des Call-Backs.
+Now **no parentheses** must follow as the **name** of a function represents
+a pointer to its start address – the **call** follows inside `std::for_each`.
 ]
 
 ```
@@ -1294,13 +1320,13 @@ std::for_each(v.begin(), v.end(), myCallBack);        // (not very visible in th
 
 ---
 template: plain
-header: #### Lokale Daten in Funktoren
+header: #### Local Data In Functors
 
-Einer der Vorteile von Funktoren ist, dass sich im Funktor lokale Variable
-sauber kapseln lassen.
+An advantage of a functor over a function is they can encapsulate local
+variables.
 
-Hierzu ein leicht modifiziertes Beispiel, bei dem der Funktor die Argumente
-durchnummeriert:
+Following is a slight modification of the previous example which  – using
+`std::for_each` – prints all the elements of a container enumerated:
 ```
 struct PrintWordsEnumerated {
     void operator()(const std::string &s) {
@@ -1314,10 +1340,11 @@ private:
 
 ---
 template: plain
-header: #### Parameterübergabe an Funktor
+header: #### Handing Local Context to Functors
 
-Über zusätzliche Member-Daten, die im Konstruktor des Funktors initialisiert
-werden, lassen sich auch Argumente aus der Aufruf-Umgebung weiterreichen:
+Using additional data members initialized in the constructor allows forwarding
+of local context – like local variables – which then hands over the functor
+to an algorithm:._[]
 ```
 struct PrintWordsEnumerated {
     void operator()(const std::string &e) {
@@ -1330,7 +1357,13 @@ private:
 };
 ```
 
-Diese sind dann bei der Verwendung zu versorgen:
+.F[:
+Actually, in this case the reason for the flexibility added to the functor
+probably is to reuse it for different sinks. Otherwise, as a global object
+`std::cout` would have been available directly in functor's `operator()`.
+]
+
+Actual values are now to supply in the instantiation of the functor object:
 ```
 std::for_each(v.begin(), v.end(),
               PrintWordsEnumerated(std::cout)); // (old) C++ style
@@ -1343,11 +1376,12 @@ std::for_each(v.begin(), v.end(),
 
 ---
 template: plain
-header: #### Parameter aus Aufrufumgebung
+header: #### Parameter From the Caller
 
-Die mit der Übergabe von Parametern geschaffene Flexibilität ist spätestens
-dann wichtig, wenn es sich um Informationen handelt, die in der Aufruf-Umgebung
-in lokalen Variablen oder Argumenten vorliegen:
+The flexibility gained is important to hand over information from the local
+calling context, like local variables or arguments the function itself
+received, that now is handing over the functor to `std::for_each` (or any other
+algorithm):
 ```
 void foo(std::ostream &output) {
     …
@@ -1358,8 +1392,9 @@ void foo(std::ostream &output) {
 ```
 
 .N[
-Dies ist nur noch mit Funktoren (und Lambdas) sauber abzubilden, mit einer
-Funktion scheidet diese Technik aus.
+This can cleanly be done with functors only – or lambdas, covered next. It
+**can not** be done with functions via additional arguments, as the argument
+list must match the call from **inseide** `std::for_each`.
 ]
 
 ---
