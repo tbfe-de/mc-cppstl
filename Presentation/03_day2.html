@@ -667,8 +667,8 @@ specified as target for the result. So, to be careful, it is advisable to
 template: withinfo
 graphic: STL-IteratorUsages
 name: removing_logically_only
-section: Return "New End" when "Removing" Elements
-header: ### Indicating Removal Via the New Logical End
+section: Removal Indication
+header: ### Indicating Removal Via Logical End
 
 To achieve maximal independence of algorithms from containers a there is a
 special pragmatic feature, that at first glance it may look inconvenient.
@@ -702,7 +702,7 @@ template: plain
 name: iterators_in_algorithms
 header: ## Iterators in Algorithms
 
-Consequently using iterarors in the implementation of all STL algorithms
+Exclusively using iterators for the implementation of (STL) algorithms
 provides a special flexibility.
 
 Iterators most often are just simple (helper) classes with an implementation
@@ -1163,46 +1163,6 @@ Excluded now is e.g. an `std::array` as it cannot be resized at run time.
 
 ---
 template: plain
-name: stl_algorithm_tour
-header: ## A Standard Algorithms Tour
-
-The tour will be presented "life" – feel free to request stops and/or deeper
-coverage at points of specific interest, simply by asking questions.
-
-[Generic Numeric Operations]: http://en.cppreference.com/w/cpp/numeric#Generic_numeric_operations
-
-.I[
-Please gather here for coach to show you around :-) …  
-at http://en.cppreference.com/w/cpp/algorithm  
-]
-
-In case you are ahead of time and have to wait for the tour to start, these are
-the major pre-planned stops (= STL algorithms grouped by purpose):
-
-* [Non-Modifying](http://en.cppreference.com/w/cpp/algorithm#Non-modifying_sequence_operations)
-  and
-  [Modifying Sequence Operations](http://en.cppreference.com/w/cpp/algorithm#Modifying_sequence_operations)
-* [Partitioning](http://en.cppreference.com/w/cpp/algorithm#Partioning_operations) and
-  [Sorting Operations](http://en.cppreference.com/w/cpp/algorithm#Sorting_operations)
-* [Binary Search](http://en.cppreference.com/w/cpp/algorithm#Binary_search_operations_.28on_sorted_ranges.29)
-  and
-  [Set Operations](http://en.cppreference.com/w/cpp/algorithm#Set_operations_.28on_sorted_ranges.29)
-  on Sorted Ranges
-* [Heap](http://en.cppreference.com/w/cpp/algorithm#Heap_operations)
-  and
-  [Minimum/Maximum Operations](http://en.cppreference.com/w/cpp/algorithm#Minimum.2Fmaximum_operations)
-* [Numeric Operations](http://en.cppreference.com/w/cpp/algorithm#Numeric_operations)
-* [Operations on Uninitialized Memory](http://en.cppreference.com/w/cpp/algorithm#Operations_on_uninitialized_memory)
-* [Classic C Library](http://en.cppreference.com/w/cpp/algorithm#C_library)
-
-.F[:
-For more exploration and gathering practical experience view the
-[Micro Projects](x2_day2.html#stl_algorithm_micro_projects)
-on STL algorithms.
-]
-
----
-template: plain
 name: stl_algorithm_callbacks
 header: ## Callbacks from Algorithms
 
@@ -1399,18 +1359,18 @@ list must match the call from **inseide** `std::for_each`.
 
 ---
 template: plain
-header: #### Datentypen in Funktoren
+header: #### Types Of Member Data In Functors
 
-Diese richten sich nach der gewünschten Zugriffsart:
+The type to chose depends on the purpose:
 
-|Zugriffsart       |Daten-Member      |Konstruktor-Argument          |
+|Access            |Data Member       |Constructor Argument          |
 |------------------|------------------|------------------------------|
-|über Kopie        |(konstanter) Wert |Wert oder (konstante) Referenz|
-|direkt, nur lesend|konstante Referenz|(konstante) Referenz          |
-|auch schreibend   |Referenz          |Referenz                      |
+|via copy          |constant value    |value or constant reference   |
+|direct readonly   |constant reference|(constant) reference          |
+|also modifying    |(plain) reference |(plain) reference             |
 
-Referenzen für Daten-Member dürfen keinesfalls mit Wertübergabe im
-Konstruktor kombiniert werden:
+Reference member data **must never** be combined with constructor value
+arguments:
 ```
 class SomeFunctor {
     …
@@ -1428,16 +1388,17 @@ public:
 ---
 template: plain
 name: callback_with_lambda
-header: ### Callback mit Lambda
+header: ### Callback Via Lambda
 
-Die in C++ neu eingeführte Lambdas haben gegenüber Funktoren den Vorteil, dass
-der ausgeführte Code direkt als Parameter des aufgerufenen Algorithmus zu sehen
-ist und nicht an einer mehr oder weniger weit davon entfernten Stelle steht.._[]
+By using Lambdas, introduced with C++11, it is possible to place the code
+executed as call-back visually in the argument with which is handed over. As
+functors can only be defined **outside** other functions this would move the
+code (much) further away.
 
-#### Grundlegendes Beispiel mit Lambda
+#### Basic Lambda Example
 
-Im einfachsten Fall greift das Lambda nur auf das vom Aufrufer übergebene
-Argument und evtl. globale Variable bzw. Objekte zu:
+In the most simple case a lambda will only access the argument handed over in
+its (later) call and maybe global variables/objects:
 ```
 std::for_each(v.begin(), v.end(),
               [](const std::string &s) {
@@ -1447,17 +1408,17 @@ std::for_each(v.begin(), v.end(),
 ```
 
 .F[:
-Mit modernen IDEs, welche die Implementierung einer Funktion oder Klasse als
-Pop-Up zeigen, sobald man kurze Zeit den Mauszeiger darüber ruhen lässt, spielt
-dieser Nachteil aber nur eine geringe Rolle.
+With modern IDEs that show the implementation of a function in a pop-up window
+when the mouse cursor hovers over a function name that is not a substantial
+disadavantage.
 ]
 
 ---
 template: plain
-header: #### Lambda mit Capture List
+header: #### Lambda With Capture List
 
-Zum Zugriff in den Sichtbarkeitsbereich des umgebenden Blocks muss die
-*Capture-List* verwendet werden:
+*Capture lists* provide access to variables or arguments from the local scope
+of a lambda:
 ```
 void foo(std::ostream &output) {
 …
@@ -1468,19 +1429,19 @@ std::for_each(v.begin(), v.end(),
 );
 ```
 
-Darin werden die übergebenen Bezeichner aufgelistet, ggf. mit vorangestelltem
-`&`-Zeichen, wenn Referenz-Übergabe erfolgen soll.
+Identifier names will simply be listed separated via a comma; per default a
+copy is made but prepending an ampersand (`&`) requests handing over as
+reference.
 
 ---
 template: plain
-header: #### Lambda mit privaten Daten
+header: #### Lambda With Private Data
 
-Ein Funktor kann problemlos private Daten besitzen, welche ausschließlich dem
-überladenen Funktionsaufruf zur Verfügung stehen.
+A functor may have private data solely accessible in its `operator()`.
 
-In C++11 sind die Möglichkeiten zur Kapselung in dieser Hinsicht für ein Lambda
-etwas eingeschränkt: lokale Daten können nicht wirklich privat sein sondern sind
-auch in der Aufrufumgebung sichtbar:
+C++11 lambdas are restricted in this respect: purely local data cannot be
+completely private as they can only come in via the capture list. Hence the
+actual data must exist outside the lambda:._[]
 ```
 void foo(std::ostream &output) {
     …
@@ -1493,8 +1454,14 @@ void foo(std::ostream &output) {
     …
 }
 ```
-Obiges zeichnet zugleich den allgemeinen Weg vor, wie ein Lambda auf seine
-Aufrufumgebung nicht nur lesend sondern auch modifizierend einwirken kann.
+
+The above code shows the general principle of "lambda local data" that is
+accessed not only for reading but also for modified.
+
+.F[:
+An additional level of bracing may be added to limit the scope of variables
+only used inside a single lambda.
+]
 
 ---
 template: plain
@@ -1662,15 +1629,15 @@ then in both cases the content would be copied.
 ---
 template: plain
 name: predicates_general
-header: ### Prädikate für Algorithmen (generell)
+header: ### Predicates For Algorithms (General Principle)
 
-Viele STL-Algorithmen haben eine Variante, in der man ein Auswahlkriterium
-(Prädikat) flexibel angeben kann. Es handelt sich dabei typischerweise um die
-Algorithmus-Variante, die mit `_if` endet.
+Many STL algorithms have a variant to which a selection criterion (predicate)
+can be specified in a flexible way. This is the algorithm variant ending in
+`_if`.
 
-Als Beispiel zur Verdeutlichung des Prinzips kann wieder die Implementierung
-eines Algorithmus zum Kopieren von einem Container in einen anderen dienen,
-diesmal beschränkt auf ausgewählte Elemente:._[]
+The following example is meant to demonstrate the principle with an algorithm
+that copies every element in a range to some other container, when it matches
+the predicate:._[]
 ```
 template<typename T1, typename T2, typename T3>
 T2 my_copy_if(T1 from, T1 upto, T2 dest, T3 pred) {
@@ -1684,83 +1651,92 @@ T2 my_copy_if(T1 from, T1 upto, T2 dest, T3 pred) {
 ```
 
 .F[:
-In die STL wurde der Algorithmus `std::copy_if` erst mit C++11 aufgenommen.
-Allerdings erfüllt das seit C++98 vorhandene `std::remove_copy_if` denselben
-Zweck, wenn man das Prädikat invertiert angibt.
+The STL algorithm `std::copy_if` was introduced only with C++11, though the
+STL algorithm `std::remove_copy_if` could be used for the same purpose if the
+predicate was inverted.
 ]
 
 ---
 template: plain
-header: #### Möglichkeiten zur Übergabe von Prädikaten
+header: #### Handing Over Predicates
 
-Da es sich um eine Template handelt, gilt für das Prädikat `pred` lediglich,
-dass als aktuelles Argument etwas "Aufrufbares" (callable) anzugeben ist.
+As template the predicate accessed via the argument named `pred` needs to be
+a *callable* – that is just something which supports the syntax to be called
+like a function:
 
-Damit kommen
+This allows for
 
-* [Funktionszeiger](#predicate_fptr),
-* [Funktoren](#predicate_functor) und
-* [C++11-Lambdas](#predicate_lambda)
+* [a function pointer](#predicate_fptr),
+* [a functor](#predicate_functor) und
+* [a C++11 lambdas](#predicate_lambda)
 
-in Frage, sofern diese als Rückgabewert ein `bool` liefern.._[]
+as long as such accept an argument of the type of the dereferenced container
+iterator (`*from`) and return a `bool`.._[]
 
 .F[:
-Oder präziser: einen Typ, der ggf. in `bool` umgewandelt wird.
+More precisely: A type that can be converted into a `bool`.
 ]
 
-Im folgenden werden in einem Container mit Ganzzahlen alle Elemente mit einem
-Wert kleiner als 42 gezählt.
+The following code counts all the elements of in a container comparing less
+than or equal to 42.
 
 ---
 template: plain
 name: predicate_fptr
-header: #### Prädikat mit Funktionszeiger übergeben
+header: #### Predicate Via Function Pointer
 
-Zunächst muss die Funktion definiert werden:
+Of course the function must be defined first:
 ```
 bool lt42(int n) { return n < 42; }
 ```
-Dann kann sie als Prädikat dienen:
+
+Then it can be used as predicate:
 ```
 … std::count_if( … , … , lt42);
 ```
 .W[
-Viele Compiler generieren hier grundsätzlich einen Funktionsaufruf, womit diese
-Variante zur Laufzeit recht ineffizient sein kann.._[]
+Many older compilers consider the name of a function which is not followed by
+parenthesis as a pointer, i.e. an address in the code segment, and from this
+inside `my_copy_if` generate true function call – which may cause a run time
+penalty.._[·]
 ]
 
 .F[:
-Die GNU-Compiler erzeugen seit einigen Jahren zumindest auf den höheren
-Optimierungsstufen aber deutlich besseren Code, indem sie bei sichtbarer
-Funktionsdefinition in Fällen wie dem Obigen eine Inline-Umsetzung vornehmen,
-selbst wenn die Funktion `lt42` nicht mit `inline` markiert wurde.
+Since a number of years the GNU compiler family at least at the higher
+optimisation levels generate much more efficient code as for tiny functions
+like the one used here they just pick-up the implementation and insert the
+equivalent code directly at the calls, even for functions **not** explicitly
+marked `inline`.
 ]
 
 ---
 template: plain
 name: predicate_functor
-header: #### Prädikat mit Funktor übergeben
+header: #### Predicate Via Functor
 
-Zunächst muss die Funktor-Klasse definiert werden:
+At first the functor must be defined:
 ```
 struct Lt42 {
     bool operator()(int n) const { return n < 42; }
 };
 ```
-Dann wird sie als Prädikat zu einem temporären Objekt instanziiert:
+
+So far it is just a type. To hand it over as argument an object of that type
+needs to be instantiated:
 ```
-… std::count_if( … , … , Lt42());
+… std::count_if( … , … , Lt42());  // classic C++
+         // or ( … , … , Lt42{});  // since C++11
 ```
 .N[
-Ist der Funktionsaufruf-Operator explizit oder wie oben implizit `inline`,._[]
-wird der erzeugte Code schneller (und oft sogar kleiner) sein als bei Übergabe
-eines Prädikats mittels Funktionszeiger.
+If `Lt42::operator()` is explicitly or implicitly `inline`._[] the generated
+code will be execute faster and often is even smaller compared to handing over
+the predicate via a function pointer.
 ]
 
 .F[:
-In Bezu auf den GCC (g++) sei aber daran erinnert, dass bei ausgeschalteter
-Optimierung (`-O0`) grundsätzlich *keine* Funktion als `inline`-Funktion
-umgesetzt wird.
+With respect to GCC (g++) it should be noted that without any optimization,
+which is the default or may be be requested with `-O0`, every function will be
+compiled into an explicit true function call **even if it is `inline`**.
 ]
 
 ---
@@ -1784,35 +1760,35 @@ auch aus diesem Grund nur selten benutzt:
 ---
 template: plain
 name: predicate_examples
-header: ### Prädikate für Algorithmen (Beispielserie)
+header: ### Predicates for Algorithms By Example
 
-Abschließend eine weitere Beispielserie zum Vergleich der verschiedenen
-Möglichkeiten, Algorithmen mit Prädikaten als Bedingungstests zu versorgen:
+Finally another example series comparing the various ways to specify predicates
+for algorithms:
 
-In der ersten Gruppe geschieht dies ohne jegliche Flexibilität – alles ist
-für den jeweiligen Einzelfall "hart kodiert".
+In the first group there is no flexibility at all, everything is hard-coded for
+a special case.
 
-* [Funktionszeiger			](#predicate_specific_fptr)
-* [Funktor				](#predicate_specific_functor)
+* [Function Pointer			](#predicate_specific_fptr)
+* [Functor				](#predicate_specific_functor)
 * [Lambda				](#predicate_specific_lambda)
 
-In der zweiten Gruppe (für welche Funktionszeiger bereits nicht mehr mächtig
-genug sind), besteht mehr Flexibilität – wobei teilweise ähnliche Techniken
-aus einem unterschiedlichen Grund zur Anwendung kommen.
+In the seconds group – for which function pointers are not any longer powerful
+enough – there is more flexibility, comparing similar approaches that had been
+chosen for different reason.
 
-* [Parametrisierter Funktor		](#predicate_parametrized_functor)
-* [Zugriff auf lokale Daten mit Funktor	](#predicate_capturing_functor)
-* [Zugriff auf lokale Daten mit Lambda	](#predicate_capturing_lambda)
+* [Parametrized  Functor		](#predicate_parametrized_functor)
+* [Access Local Scope Data Via Functor	](#predicate_capturing_functor)
+* [Access Local Scope Data Via Lambda	](#predicate_capturing_lambda)
 
 
 ---
 template: plain
 name: predicate_specific_fptr
-header: #### Prädikat mit spezifischem Funktionszeiger
+header: #### Predicate Via Specific Function Pointer
 
-Dies ist die aus der C-Programmierung bekannte Technik.
+This technique has already been used in C programming.
 
-Das Beispiel gibt alle Elemente mit einem Wert ungleich 524 aus:
+The example prints all values except those comparing equal to 524:
 ```
 bool notEq524(int n) { return n != 524; }
 
@@ -1829,11 +1805,12 @@ void foo(const std::vector<int> &v) {
 ---
 template: plain
 name: predicate_specific_functor
-header: #### Prädikat mit spezifischem Funktor
+header: #### Predicate Via Specific Functor
 
-Dies ist eine für C++-typische Technik.
+This technique is typical for C++.
 
-Auch dieses Beispiel gibt alle Elemente mit einem Wert ungleich 524 aus:
+Again the example prints all values except those comparing equal to 524:
+
 ```
 struct NotEq524 {
     bool operator()(int n) const { return n != 524; }
@@ -1851,11 +1828,11 @@ void foo(const std::vector<int> &v) {
 ---
 template: plain
 name: predicate_specific_lambda
-header: #### Prädikat mit spezifischem Lambda
+header: #### Predicate Via Specific Lambad
 
-Und ein drittes Mal mit einem (C++11) Lambda.
+And for the third time, now with a C++11 Lambda.
 
-Wiederum werden alle Elemente mit einem Wert ungleich 524 ausgegeben:
+Again all elements except those comparing equal to 524 are printed:
 ```
 void foo(const std::vector &v) {
     …
@@ -1870,11 +1847,11 @@ void foo(const std::vector &v) {
 ---
 template: plain
 name: predicate_parametrized_functor
-header: #### Prädikat mit allgemeiner verwendbarem Funktor
+header: #### Predicate With More Flexible Functor
 
-Der im folgenden verwendete Funktor kann in allen Vergleichen benutzt werden,
-welche auf die Prüfung hinauslaufen, ob eine Ganzzahl ungleich zu einem
-gegebenen Wert ist:
+The following functor may be used for all "not equal to" comparisons
+with `int`-s:
+
 ```
 class NotEq {
     const int cmp;
@@ -1898,11 +1875,10 @@ void foo(const std::vector &v) {
 ---
 template: plain
 name: predicate_capturing_functor
-header: #### Prädikat mit Funktor und Zugriff auf lokalen Kontext
+header: #### Predicate With Functor Accessing Local Context
 
-Um auf lokale Variablen oder Parameter._[] einer aufrufenden Funktion zugreifen
-zu können, muss ein Funktor entsprechende Daten-Member besitzen und sein
-Konstruktor muss diese initialisieren:
+To access variables or parameters._[] from the local context a functor needs
+data members and a constructor to initializes them:
 ```
 void foo(const std::vector &v, int hide) {
     …
@@ -1915,19 +1891,18 @@ void foo(const std::vector &v, int hide) {
 }
 ```
 .F[:
-Die Parameter einer Funktion entsprechen nahezu ihren lokalen Variablen.
-Es kommt lediglich die (garantierte) Initialisierung mit vom Aufrufer
-anzugebenden Werten hinzu.
+The parameters of a function are much similar to local variables. The only
+difference is they are initialized at the callers choice whenever an actual
+call takes place.
 ]
 
 ---
 template: plain
 name: predicate_capturing_lambda
-header: #### Prädikat mit Lambda und Zugriff auf lokalen Kontext
+header: #### Predicate With Lambda Accessing Local Context
 
-Um auf lokale Variablen oder Parameter._[] einer aufrufenden Funktion zugreifen
-zu können, muss ein Lambda die Capture-List verwenden:
-
+To access variables or parameters._[] from the local context a lambda needs to
+use a capture list:
 ```
 void foo(const std::vector &v, int hide) {
     …
@@ -1940,16 +1915,15 @@ void foo(const std::vector &v, int hide) {
 ```
 
 .N[
-Lambdas in Member-Funktionen einer Klasse können hier auch `this` angeben. Damit
-besteht innerhalb des Lambdas Zugriff auf alle Member (Daten und Funktionen)
-desjenigen Objekts, für welches die das Lambda enthaltende Member-Funktion
-ausgeführt wird.
+Lambdas within member functions of a class may also name `this` in the capture
+list and then directly access all the member data and functions accessible for
+the member function in which defined the lambda.
 ]
 
 .F[:
-Die Parameter einer Funktion entsprechen nahezu ihren lokalen Variablen.
-Es kommt lediglich die (garantierte) Initialisierung mit vom Aufrufer
-anzugebenden Werten hinzu.
+The parameters of a function are much similar to local variables. The only
+difference is they are initialized at the callers choice whenever an actual
+call takes place.
 ]
 
 ---
@@ -1975,6 +1949,46 @@ What to do next?
   * …  or [continue with next part](04_day2.html),
   * … or with the next (and last) page of this part.
 
+---
+template: plain
+name: stl_algorithm_tour
+header: ## A Standard Algorithms Tour
+
+The tour will be presented "life" – feel free to request stops and/or deeper
+coverage at points of specific interest, simply by asking questions.
+
+[Generic Numeric Operations]: http://en.cppreference.com/w/cpp/numeric#Generic_numeric_operations
+
+.I[
+Please gather here for coach to show you around :-) …  
+at http://en.cppreference.com/w/cpp/algorithm  
+]
+
+In case you are ahead of time and have to wait for the tour to start, these are
+the major pre-planned stops (= STL algorithms grouped by purpose):
+
+* [Non-Modifying](http://en.cppreference.com/w/cpp/algorithm#Non-modifying_sequence_operations)
+  and
+  [Modifying Sequence Operations](http://en.cppreference.com/w/cpp/algorithm#Modifying_sequence_operations)
+* [Partitioning](http://en.cppreference.com/w/cpp/algorithm#Partioning_operations) and
+  [Sorting Operations](http://en.cppreference.com/w/cpp/algorithm#Sorting_operations)
+* [Binary Search](http://en.cppreference.com/w/cpp/algorithm#Binary_search_operations_.28on_sorted_ranges.29)
+  and
+  [Set Operations](http://en.cppreference.com/w/cpp/algorithm#Set_operations_.28on_sorted_ranges.29)
+  on Sorted Ranges
+* [Heap](http://en.cppreference.com/w/cpp/algorithm#Heap_operations)
+  and
+  [Minimum/Maximum Operations](http://en.cppreference.com/w/cpp/algorithm#Minimum.2Fmaximum_operations)
+* [Numeric Operations](http://en.cppreference.com/w/cpp/algorithm#Numeric_operations)
+* [Operations on Uninitialized Memory](http://en.cppreference.com/w/cpp/algorithm#Operations_on_uninitialized_memory)
+* [Classic C Library](http://en.cppreference.com/w/cpp/algorithm#C_library)
+
+.F[:
+For more exploration and gathering practical experience view the
+[Micro Projects](x2_day2.html#stl_algorithm_micro_projects)
+on STL algorithms.
+]
+
 </textarea>
 <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
 <!-- ::::::::::::::::::::: )-: ereh TNETNOCLAER fo dne :::::::::::::::::::: -->
@@ -1986,5 +2000,3 @@ What to do next?
     </script>
   </body>
 </html>
-
-
