@@ -143,8 +143,8 @@ template: blank
 
 -------------------------------------------------------------------------------
 
-* [Commonalities within Categories	](#category_commonalities)
-* [STL Containers in Detail 		](#stl_container_details)
+* [Commonalities within Categories		](#category_commonalities)
+* [STL Containers and Adaptors in Detail	](#stl_container_details)
 
 -------------------------------------------------------------------------------
 
@@ -180,14 +180,18 @@ header: ## Commonalities within Categories
 .center[Further Comparisons of Associative Containers]
 
 .pull-left[
+
 * [Sets versus Maps		](#sets_versus_maps)
 * [Commonalities of Sets	](#set_container_commonalities)
 * [Commonalities of Maps	](#map_container_commonalities)
+
 ]
 .pull-right[
+
 * [Unique Values / Keys		](#nonmulti_container_commonalities)
 * [Non-Unique Values / Keys	](#multi_container_commonalities)
 * [Unique / Non-Unique Keys	](#nonmulti_vs_multi_maps)
+
 ]
 
 ---
@@ -578,7 +582,7 @@ single entry with no other entries comparing equal.
   * member `first` is an iterator set to the position of the newly inserted or
     already existing element;
   * member `second` is a `bool` which is `true` if a new entry was added,
-    `false`if this was not the case because one already existed.
+    `false` if this was not the case because one already existed.
 
 * To look-up an element with a given value or key, usually the member function
   `find` is used, which returns._[]
@@ -638,7 +642,7 @@ variant:
   * either return the value part of the entry for this key by reference,
   * or throw an `std::out_of_range` exception.
 
-* C++1y will add another function `insert_or_assign` which allows to either
+* C++17 added another function `insert_or_assign` which allows to either
   insert a new entry or change the value part of an existing one.
 
 ---
@@ -672,42 +676,46 @@ name: stl_container_details
 header: ### STL Containers and Adaptors in Detail
 
 .pull-left[
+
 -------------------------------------------------------------
 Sequence Containers:
 
-* [Class `std::array`](#class_std_array)
-* [Class `std::vector`](#class_std_vector)
-* [Class `std::deque`](#class_std_deque)
-* [Class `std::forward_list`](#class_std_forward_list)
-* [Class `std::list`](#class_std_list)
+* [Class `std::array`			](#class_std_array)
+* [Class `std::vector`			](#class_std_vector)
+* [Class `std::deque`			](#class_std_deque)
+* [Class `std::forward_list`		](#class_std_forward_list)
+* [Class `std::list`			](#class_std_list)
 
 -------------------------------------------------------------
 Container Adaptors:
 
-* [Class `std::stack`](#class_std_stack)
-* [Class `std::queue`](#class_std_queue)
-* [Class `std::priority_queue`](#class_std_priority_queue)
+* [Class `std::stack`			](#class_std_stack)
+* [Class `std::queue`			](#class_std_queue)
+* [Class `std::priority_queue`		](#class_std_priority_queue)
 
 -------------------------------------------------------------
+
 ]
 .pull-right[
+
 -------------------------------------------------------------
 Ordered Associative Containers:
 
-* [Class `std::set`](#class_std_set)
-* [Class `std::multiset`](#class_std_multiset)
-* [Class `std::array`](#class_std_array)
-* [Class `std::unordered_set`](#class_std_unordered_set)
+* [Class `std::set`			](#class_std_set)
+* [Class `std::multiset`		](#class_std_multiset)
+* [Class `std::unordered_set`		](#class_std_unordered_set)
+* [Class `std::unordered_multiset`	](#class_std_unordered_multiset)
 
 -------------------------------------------------------------
 Unordered Associative Containers:
 
-* [Class `std::map`](#class_std_map)
-* [Class `std::multimap`](#class_std_multimap)
-* [Class `std::array`](#class_std_array)
-* [Class `std::unordered_map`](#class_std_unordered_map)
+* [Class `std::map`			](#class_std_map)
+* [Class `std::multimap`		](#class_std_multimap)
+* [Class `std::unordered_map`		](#class_std_unordered_map)
+* [Class `std::unordered_multimap`	](#class_std_unordered_multimap)
 
--------------------------------------------------------------
+------------------------------------------------------------------
+
 ]
 
 ---
