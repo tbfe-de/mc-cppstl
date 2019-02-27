@@ -609,10 +609,36 @@ Sorting elements
 
 * of an `std::list` or an `std::forward_list` needs to be done with the member
   function `sort`
-  * which **guarantee** a [Stable Sort], while
+  * which **guarantees** a [Stable Sort], while
 
 * for any other sequential container it is done with the (non-member) algorithm
-  `std::sort`,
+  `std::sort`.
+
+---
+template: plain
+name: stl_big_o_peculiarities
+header: ### STL Non-Obvious "Big-O" Complexity
+
+Usually operations are not implemented if this were only possible with a
+substantial performance penalty.
+
+* Therefore `std::vector` has no member function `push_font` as `std::deque` and
+  `std::list` have …
+  * … but you can still use the `insert` member function anywhere, though
+   O(N<sup>2</sup>) performance.
+
+* Nonetheless `std::binary_search` is applicable to linear lists and specified
+  to have "good" O(log<sub>2</sub>(N)) performance …
+  * … though in this case you would naively expect much worse O(N).
+
+* Adding elements to an `std::vector` at its end is specified to run in
+  amortized constant time,
+  * even though the available space must be eventually enlarged,
+  * an operation more and more expensive, each time it happens.
+
+(More cases as those discussed above may exist.)
+
+---
 template: plain
 name: summary
 header: ## Summary
@@ -636,30 +662,6 @@ What to do next?
   * … or with the next (and last) page of this part.
 
   * (if this is desired `std::stable_sort` has to be used).
-
-(More cases as those discussed above may exist.)
-
----
-template: plain
-name: stl_big_o_peculiarities
-header: ### STL Non-Obvious "Big-O" Complexity
-
-Usually operations are not implemented if this were only possible with a
-substantial performance penalty.
-
-* Therefore `std::vector` has no member function `push_font` as `std::deque` and
-  `std::list` have …
-  * … but you can still use the `insert` member function anywhere, though
-   O(N<sup>2</sup>) performance.
-
-* Nonetheless `std::binary_search` is applicable to linear lists and specified
-  to have "good" O(log<sub>2</sub>(N)) performance …
-  * … though in this case you would naively expect much worse O(N).
-
-* Adding elements to an `std::vector` at its end is specified to run in
-  amortized constant time,
-  * even though the available space must be eventually enlarged,
-  * an operation more and more expensive, each time it happens.
 
 (More cases as those discussed above may exist.)
 

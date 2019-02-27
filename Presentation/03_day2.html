@@ -264,8 +264,7 @@ header: #### Visualising Iterators *Pointing Between* Elements
   outside of the container.
 
 .W[
-**Nevertheless:**  
-Any attempt to move the iterator beyond the container borders
+**Still** any attempt to move the iterator beyond the container borders is
 [Undefined Behaviour] according to the ISO Standard.
 ]
 
@@ -407,6 +406,8 @@ If the visualisation of iterators **pointing to** elements is preferred.
 template: plain
 name: stl_iterator_traits
 header: ## Iterator Traits
+
+[Type Traits]: https://accu.org/index.php/journals/442
 
 [Meta-Programming]: https://en.wikibooks.org/wiki/C%2B%2B_Programming/Templates/Template_Meta-Programming
 
@@ -880,19 +881,39 @@ function overloads and default arguments – which it currently doesn't.
 template: plain
 header: #### Stream Iterators
 
-Much like various forms of insert iterators classes forward an assignment_[]
-to the `push_front`, `push_back`, or `insert` member function of the given
-container, also other operations can be wrapped into small helper classes.
+Much like various forms of iterators for filling STL containers forward an
+assignment to the `push_front`, `push_back`, or `insert` member function
+also stream input and output operations can be wrapped into helper classes.
 
-.F[:
-More precisely an assignment to whatever type their dereferencing operations
-return.
+There are two versions:
+
+* `std::ostream_iterator<`*`T`*`>` wrapping `operator<<` with
+  * a left-hand side operand of type `std::ostream&` and
+  * a right-hand side operand of of type *`T`*.
+
+* `std::istream_iterator<`*`T`*`>` wrapping `operator>>` with
+  * a left-hand side operand of type `std::istream&` and
+  * a right-hand side operand of type *`T&`*.
+
+.N[
+For the right-hand side operands also type conversions will be considered if
+there is no exact fit.._[]
 ]
 
-##### Writing To a Stream With `std::ostream_iterator`:
+.F[:
+As for output the right-hand side operand of `operator<<` is accessed for read
+the range of possible conversions is substantially larger as for `operaror>>`
+So, **if there is no exact fit and therefore conversions are considered,**
+there is a certain risk ambiguities may cause compilation to fail.
+]
 
-The next example inserts all elements from of `std::forward_list` to standard
-output with a semicolon (`;`) appended after each value:
+
+---
+template: plain
+header: ##### Writing To a Stream With `std::ostream_iterator`:
+
+In this example all elements from an `std::forward_list` turned into console
+output._[] with a semicolon (`;`) appended after each value:
 ```
 std::forward_list<long> fli;
 …
@@ -906,17 +927,18 @@ Generating output that way requires the elements of the `std::forward_list` are
 convertible to `long` – a no-op in this case.
 ]
 
-In general, as stream insertion uses `std::operator<<`, any type will work for
-which that operator is defined with a right-hand operand of the type specified
-as template argument.
+.F[:
+Or wherever the standard output stream of the process is redirected to, given
+your execution environment allows for it via its command shell.
+]
 
 ---
 template: plain
 header: ##### Reading From a Stream With `std::istream_iterator`:
 
-The next example._[] extracts values of type `std::string` from standard input,
-pushing each to the front of an `std::forward_list` so the last comes first if
-later traversed with an (ordinary forward) iterator:._[]
+In this example._[] values of type `std::string` are accepted as console
+input._[], pushing each to the front of an `std::forward_list` so the last
+comes first if later traversed with an (ordinary forward) iterator:
 ```
 std::forward_list<std::string> fli;
 copy(std::istream_iterator<std::string>(std::cin),
@@ -927,31 +949,68 @@ copy(std::istream_iterator<std::string>(std::cin),
 
 .N[
 Filling the `std::forward_list` that way requires what is extracted via the
-`std::istream_iterator` is convertible to `std::string` – a no-op in this case.
+`std::istream_iterator` convertible to `std::string` – a no-op in this case.
 ]
 
-In general, as stream extraction uses `std::operator>>`, any type will work for
-which that operator is defined with a right-hand operand of the type specified
-as template argument.
+---
+template: plain
+header: ##### Determining End Of Input With `std::istream_iterator`:
 
+The previous example may well be in a "cookbook style", simply changing what
+needs obviously to be changed.
+
+For a deeper understanding how it works consider this:
+
+* As usual with STL algorithms the "range" in the stream is specified with
+  two iterators
+  **from** which element and
+  **up to* which element.
+
+* Therefore the first and the second argument **both** are (temporary)
+  objects of type `std::istream_iterator`.
+  * The first is created with a constructor that has an argument of type
+    `std::istream&` **which is then used as data source**.
+  * The second has **no argument arguent at all** – i.e. it is created with the
+    *default constructor*.
+
+.N.center[
+Equality comparison returning `false` means the range is exhausted.._[]
+]
 
 .F[:
-You may well use the above example in a "cookbook style", simply changing what
-needs obviously to be changed. But for those who want some deeper understanding
-here are some hints:  
-The "range" in the stream from which the input is extracted is specified via
-two constructors of the class `std::istream_iterator` returning temporary
-objects. The first has an argument which is an `std::istream` to be used as
-data source. The second has no argument – i.e. the *default constructor* of
-that class.  
-Comparing these two object for equality determines when the range ends. So in
-some way the operations `*` and `++` are forwarded to `operator>>`. For all
-standard algorithms it is guaranteed that the use adheres to the requirements
-of an [Input Iterator](input_iterators) and within these restrictions comparing
-the two objects for equality returns `true` as long as there is more input
-available.
+Which is just another way of saying: Any `std::istream_iterator` "connected" to
+a stream will compare `true` to an `std::istream_iterator` created with the
+default constructor exaclty as long as there is more data to extract.
 ]
 
+
+---
+template: plain
+header: ##### Implementation Qirks Of `std::istream_iterator`:
+
+Thinking about how `std::istream_iterators` might be implemented within the
+"contract" of properly using iterators in the Category
+[Input-Iterators](#input_iterators)
+
+* There must be some kind of "look-ahead" mechanism, which means the first
+  element from the input source is extracted in the constructor and stored.
+
+* That stored element then just is **returned** by `operator*`.
+
+* The next element is extracted by `operator++`.
+
+If you are implementing Input-Iterators for a stream yourself._[] make sure you
+fully understand all the details of the usage contract.
+
+.N[
+Do plenty of testing – ideally automated in TDD style –  to prove to yourself
+you have got everything right.
+]
+
+.F[:
+Note that only the STL authors will typically will have to do this – **all the
+others should simply use the stream iterators as provided by the STL**.
+]
 ---
 template: plain
 header: #### Native Pointers As Iterators
@@ -1212,27 +1271,26 @@ supplied via a *call back* as third argument.
 First a functor (that just prints all the elements after a colon):
 ```
 struct PrintWords { // in a struct everything is public by default
-    void operator()(const std::string &e) {
-        cout << e << "\n";
-    }
+    void operator()(const std::string &e) { cout << e << "\n"; }
 };
 ```
 
 .N[
-After the **class name** of the functor **follow round parentheses or curly
-brackets, to instantiate a temporary. object (bound as argument).._[]
+After the **class name** of the functor follow round parentheses or curly
+brackets to instantiate a temporary object (bound to the argument).._[]
 ]
 
 ```
 std::for_each(v.begin(), v.end(), PrintWords()); // (old) C++ Style
 ```
+With C+11, using brace initialiation and `const_iterators`:._[]
 ```
-std::for_each(v.begin(), v.end(), PrintWords{}); // since C++11 also
+std::for_each(v.cbegin(), v.cend(), PrintWords{});
 ```
 
 .F[:
-Instead of a temporary object also a named object may be instantiated which
-then would be handed over **without** any parentheses or braces following it.
+The use of `const_iterators` assures read-only access but is not essential to
+make this work.
 ]
 
 ---
@@ -1247,7 +1305,7 @@ void print_words(const std::string &e) {
 };
 ```
 .N[
-Now **no parentheses** must follow as the **name** of a function represents
+**No parentheses** must follow as the **name** of a function represents
 a pointer to its start address – the **call** follows inside `std::for_each`.
 ]
 
@@ -1257,10 +1315,9 @@ std::for_each(v.begin(), v.end(), print_words);
 
 .F[:
 As an advanced feature that should not go completely without noting (though it
-will not be covered further here) consider an addition to C++11, a new utility
-type able to wrap any *Callable*, be it functors, functions, or lambdas (of
-matching signature). While `std::function` may loosen coupling (which is
-often desirable) also note that it will typically **introduce an extra level of
+will not be covered further here) C++11 allows to wrap any *Callable* (with
+matching signature) using `std::function`: While it loosens then coupling
+(which is often desirable) it will typically **introduce an extra level of
 indirection for the at actual call**, leading to less locality in the code
 (usually **not** desirable).
 
@@ -1322,15 +1379,11 @@ probably is to reuse it for different sinks. Otherwise, as a global object
 `std::cout` would have been available directly in functor's `operator()`.
 ]
 
-Actual values are now to supply in the instantiation of the functor object:
+Actual values are now supplied in the instantiation of the functor object:
 ```
 std::for_each(v.begin(), v.end(),
-              PrintWordsEnumerated(std::cout)); // (old) C++ style
-```
-
-```
-std::for_each(v.begin(), v.end(),
-              PrintWordsEnumerated{std::cout}); // since C++11 also
+              PrintWordsEnumerated{std::cout});
+// classic C++ needs to use round ^---------^ parenthesis here.
 ```
 
 ---
